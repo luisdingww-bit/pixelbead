@@ -57,3 +57,6 @@ python -m http.server 8080
 
 ---
 © 2026 拼豆星球 PIXELBEAD · 由创作者用 ❤ 与 🧩 搭起来
+
+## 📄 License
+本项目基于 [MIT License](./LICENSE) 开源，可自由使用、修改与分发，请保留版权声明。
