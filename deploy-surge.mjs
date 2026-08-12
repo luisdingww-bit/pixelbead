@@ -25,8 +25,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // ===== 配置：要生成的多个 Surge 端（域名）=====
 const DOMAINS = [
   'pixelbead.surge.sh',     // 主端
-  'pixelbead-2.surge.sh',   // 第二个端（改成你想要的域名即可）
-  // 'pixelbead-cn.surge.sh', // 想加更多端，取消注释或继续加
+  // 想加更多端，在下面加域名即可（例如 'pixelbead-cn.surge.sh'）
 ];
 
 // 要打包进部署目录的站点文件 / 目录
