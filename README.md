@@ -36,6 +36,23 @@ python -m http.server 8080
 2. 仓库 **Settings → Pages**，Source 选择 `Deploy from a branch` → `main` → `/ (root)`。
 3. 等待约 1 分钟，访问 `https://<用户名>.github.io/pixelbead/`。
 
+## 🌊 部署到 Surge（多个端 / 多域名）
+把同一个 pixelbead 站点一键部署成多个 Surge 网站（多域名镜像）。
+
+1. 安装并登录 Surge（本机只需一次）：
+   ```bash
+   npm install -g surge
+   surge login          # 浏览器授权，记住账号
+   ```
+2. 一键部署到所有配置的域名：
+   ```bash
+   node deploy-surge.mjs
+   ```
+   - 多个端在 `deploy-surge.mjs` 顶部的 `DOMAINS` 数组里配置（默认 `pixelbead.surge.sh` + `pixelbead-2.surge.sh`，可任意增删改名）。
+   - 想免交互部署（如 CI）：先 `surge token` 拿到令牌，再 `set SURGE_TOKEN=xxxx && node deploy-surge.mjs`。
+   - 脚本会先复制出干净的 `.surge-dist/`（自动排除 `.git` / `.workbuddy` 等），再逐个 `surge` 上去，部署完自动清理。
+3. 访问：`https://pixelbead.surge.sh` 以及你配置的其它域名。
+
 ## 📁 目录结构
 ```
 .

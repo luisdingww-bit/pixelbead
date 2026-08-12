@@ -2,6 +2,7 @@
 node_modules/
 dist/
 build/
+.surge-dist/
 *.log
 
 # 系统文件
