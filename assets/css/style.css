@@ -350,3 +350,9 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
   .art-row{ grid-template-columns:1fr; }
   .feat-grid{ grid-template-columns:1fr; }
 }
+
+/* ===== 设计器模块切换标签 ===== */
+.module-tabs{ display:flex; gap:.6rem; flex-wrap:wrap; justify-content:center; padding:.8rem 1rem; background:#fff; border-bottom:3px solid rgba(0,0,0,.08); position:sticky; top:0; z-index:20; }
+.mtab{ font-family:var(--font-disp); font-weight:800; font-size:.95rem; padding:.55rem 1.1rem; border-radius:999px; border:3px solid rgba(0,0,0,.12); background:#fff; cursor:pointer; color:#3a3f4a; transition:all .12s ease; }
+.mtab:hover{ transform:translateY(-2px); }
+.mtab.active{ background:var(--brick-red); color:#fff; border-color:var(--brick-red); box-shadow:0 4px 0 var(--shadow-hard); }

@@ -122,3 +122,102 @@ window.PATTERNS = [
   { name:'星星',   cols:15, rows:15, data:star },
   { name:'蘑菇',   cols:15, rows:15, data:mushroom }
 ];
+
+/* =========================================================
+   模块注册表 —— 供设计器按模块切换调色板 & 预设图案
+   每个模块: { label, palette:[{name,hex}], patterns:[{name,cols,rows,data}] }
+   ========================================================= */
+
+const CLOISONNE_PALETTE = [
+  { name:'宝蓝',   hex:'#006CB7' },
+  { name:'胭脂红', hex:'#E3000B' },
+  { name:'松绿',   hex:'#00A650' },
+  { name:'鎏金',   hex:'#F4C430' },
+  { name:'象牙白', hex:'#FCFCFC' },
+  { name:'墨黑',   hex:'#1A1A1A' },
+  { name:'青碧',   hex:'#00B6C4' },
+  { name:'紫晶',   hex:'#7B2FBF' },
+  { name:'银',     hex:'#D9DCE1' },
+  { name:'桃',     hex:'#FFB38A' }
+];
+
+const ARCH_PALETTE = [
+  { name:'混凝土', hex:'#9AA0A6' },
+  { name:'砖红',   hex:'#E3000B' },
+  { name:'玻璃蓝', hex:'#006CB7' },
+  { name:'石灰白', hex:'#FCFCFC' },
+  { name:'暖石',   hex:'#C8A06A' },
+  { name:'深蓝',   hex:'#1B2A6B' },
+  { name:'橄榄绿', hex:'#00A650' },
+  { name:'墨',     hex:'#1A1A1A' },
+  { name:'金',     hex:'#F4C430' },
+  { name:'青',     hex:'#00B6C4' }
+];
+
+/* ---- 掐丝珐琅预设 ---- */
+const cloisonne_flower = makeGrid(15,15,(x,y,c,r)=>{
+  const nx=(x-(c-1)/2)/((c-1)/2), ny=((r-1)/2-y)/((r-1)/2);
+  const d=Math.sqrt(nx*nx+ny*ny);
+  if(d>0.86) return null;
+  if(d<0.16) return C('金');
+  if(d<0.40) return C('胭脂红');
+  if(d<0.62) return C('宝蓝');
+  return C('象牙白');
+});
+
+const cloisonne_lattice = makeGrid(15,15,(x,y,c,r)=>{
+  if(((x+y)%3===0) || ((x-y+15)%3===0)) return C('宝蓝');
+  return C('象牙白');
+});
+
+const cloisonne_cloud = makeGrid(15,15,(x,y,c,r)=>{
+  const inC=(cx,cy,rad)=>{const dx=x-cx,dy=y-cy;return dx*dx+dy*dy<=rad*rad;};
+  if(inC(5,9,3)||inC(9,9,3)||inC(7,6,2.4)) return C('青碧');
+  if(inC(7,9,1.6)) return C('宝蓝');
+  return null;
+});
+
+const CLOISONNE_PATTERNS = [
+  { name:'团花',   cols:15, rows:15, data:cloisonne_flower },
+  { name:'菱格',   cols:15, rows:15, data:cloisonne_lattice },
+  { name:'祥云',   cols:15, rows:15, data:cloisonne_cloud }
+];
+
+/* ---- 建筑预设 ---- */
+const arch_pearl = makeGrid(15,19,(x,y,c,r)=>{
+  const col=C('混凝土'), red=C('砖红');
+  if(y<=1 && x===7) return C('金');
+  { const dx=x-7,dy=y-5;  if(dx*dx+dy*dy<=4)  return red; }   // 小球
+  { const dx=x-7,dy=y-11; if(dx*dx+dy*dy<=9)  return red; }   // 大球
+  if(x===7 && y>=2 && y<=15) return col;                       // 柱
+  if(y>=16 && x>=5 && x<=9) return col;                        // 基座
+  return null;
+});
+
+const arch_tower = makeGrid(15,19,(x,y,c,r)=>{
+  if(x<3||x>11||y<3) return null;
+  if(y>=18) return C('混凝土');
+  return ((x+y)%2===0) ? C('石灰白') : C('玻璃蓝');
+});
+
+const arch_house = makeGrid(15,13,(x,y,c,r)=>{
+  const cx=7;
+  if(y<=4 && Math.abs(x-cx) <= (4-y)+1) return C('砖红');     // 屋顶
+  if(y>4 && y<=10 && x>=4 && x<=10){
+    if(y>=8 && x>=6 && x<=8) return C('深蓝');                 // 门
+    return C('暖石');                                          // 墙
+  }
+  return null;
+});
+
+const ARCH_PATTERNS = [
+  { name:'东方明珠', cols:15, rows:19, data:arch_pearl },
+  { name:'摩天楼',   cols:15, rows:19, data:arch_tower },
+  { name:'小屋',     cols:15, rows:13, data:arch_house }
+];
+
+window.MODULES = {
+  pixel:        { label:'像素拼豆', palette: window.PALETTE,         patterns: window.PATTERNS },
+  cloisonne:    { label:'掐丝珐琅', palette: CLOISONNE_PALETTE,      patterns: CLOISONNE_PATTERNS },
+  architecture: { label:'建筑',     palette: ARCH_PALETTE,          patterns: ARCH_PATTERNS }
+};

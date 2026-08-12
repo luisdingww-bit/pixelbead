@@ -27,6 +27,27 @@
   let drawing = false;
   let undoStack = [], redoStack = [];
 
+  /* ---------- 模块切换（像素拼豆 / 掐丝珐琅 / 建筑）---------- */
+  function getModule(){
+    const p = new URLSearchParams(location.search).get('m');
+    return (p && window.MODULES && window.MODULES[p]) ? p : 'pixel';
+  }
+  let MODULE = getModule();
+  function applyModule(m){
+    if(!window.MODULES[m]) m='pixel';
+    MODULE = m;
+    const mod = window.MODULES[m];
+    window.PALETTE  = mod.palette.slice();
+    window.PATTERNS = mod.patterns;
+    current = mod.palette[2] ? mod.palette[2].hex : mod.palette[0].hex;
+    buildPalette(); buildPresets();
+    const label = document.getElementById('moduleLabel');
+    if(label) label.textContent = mod.label + '设计器';
+    document.querySelectorAll('#moduleTabs .mtab').forEach(b=>b.classList.toggle('active', b.dataset.mod===m));
+    if(history.replaceState) history.replaceState(null, '', m==='pixel' ? location.pathname : '?m='+m);
+    loadPattern(mod.patterns[0]); // 载入首个模板，给第一眼惊艳
+  }
+
   /* ---------- 初始化 ---------- */
   function blankGrid(c,r){ const g=[]; for(let y=0;y<r;y++){ const row=[]; for(let x=0;x<c;x++) row.push(null); g.push(row);} return g; }
 
@@ -262,9 +283,10 @@
 
   /* ---------- 启动 ---------- */
   setupCanvas(); grid=blankGrid(COLS,ROWS);
-  buildPalette(); buildPresets(); setTool('pen');
+  setTool('pen');
   iso.width=600; iso.height=440;
-  render();
-  // 默认载入一个爱心，给用户第一眼惊艳
-  loadPattern(window.PATTERNS[0]);
+  applyModule(MODULE);                 // 按 URL ?m= 载入对应模块的调色板 / 预设 / 首个模板
+  document.querySelectorAll('#moduleTabs .mtab').forEach(b=>{
+    b.addEventListener('click',()=>applyModule(b.dataset.mod));
+  });
 })();
