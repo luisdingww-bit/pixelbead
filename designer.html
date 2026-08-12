@@ -85,6 +85,35 @@
 
 </div>
 
+<!-- 掐丝珐琅 · 七道工序引导（仅 cloisonné 模式显示） -->
+<section id="processGuide" class="proc-sec" style="--accent:#006CB7" hidden>
+  <div class="wrap proc-inner">
+    <div class="proc-head">
+      <span class="hero-badge">🪡 掐丝珐琅 · 七道工序</span>
+      <h2>从线稿到珐琅胸针</h2>
+      <p>按这七道工序一步步来：先在画板排好纹样当底稿，再到实物掐丝、点蓝、贴珠、烧制成品。</p>
+    </div>
+
+    <div class="proc-steps" id="procSteps"><!-- JS 注入 7 个步骤胶囊 --></div>
+
+    <div class="proc-detail">
+      <div class="proc-media"><img id="procImg" src="assets/img/process-1.svg" alt="贴线稿"></div>
+      <div class="proc-text">
+        <div class="proc-no" id="procNo">1 / 7</div>
+        <h3 id="procTitle">贴线稿</h3>
+        <p class="proc-desc" id="procDesc"></p>
+        <div class="proc-tip" id="procTip"></div>
+        <button class="btn btn-yellow" id="procAction" style="display:none;width:100%;justify-content:center;margin-top:.4rem"></button>
+        <div class="proc-progress"><div class="proc-bar" id="procBar"></div></div>
+        <div class="proc-nav">
+          <button class="btn btn-ghost" id="procPrev">← 上一步</button>
+          <button class="btn btn-red" id="procNext">下一步 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <div class="toast" id="toast"></div>
 
 <script src="assets/js/bead-core.js"></script>

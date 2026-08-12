@@ -366,3 +366,37 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
 .step-media img{ display:block; width:100%; height:auto; }
 .step h3{ margin:.85rem 0 .35rem; font-family:var(--font-disp); font-weight:800; font-size:1.12rem; }
 .step p{ font-size:.9rem; color:#565c68; line-height:1.55; }
+
+/* ===== 设计器 · 掐丝珐琅七道工序引导 ===== */
+.proc-sec{ padding:1.2rem 0 3.6rem; }
+.proc-inner{ }
+.proc-head{ text-align:center; margin-bottom:1.5rem; }
+.proc-head h2{ font-family:var(--font-disp); font-weight:800; font-size:clamp(1.6rem,3.5vw,2.4rem); margin:.4rem 0; }
+.proc-head p{ color:#4a505c; max-width:64ch; margin:.3rem auto 0; }
+
+.proc-steps{ display:flex; gap:.5rem; flex-wrap:wrap; justify-content:center; margin-bottom:1.4rem; }
+.proc-chip{ display:flex; align-items:center; gap:.5rem; padding:.5rem .95rem; border-radius:999px;
+  border:3px solid rgba(0,0,0,.12); background:#fff; cursor:pointer; font-weight:700; font-size:.85rem; color:#3a3f4a; transition:all .12s ease; }
+.proc-chip .num{ width:24px; height:24px; border-radius:50%; background:var(--paper-2); color:var(--ink);
+  display:grid; place-items:center; font-family:var(--font-disp); font-size:.78rem; }
+.proc-chip:hover{ transform:translateY(-2px); }
+.proc-chip.active{ background:var(--accent,#006CB7); color:#fff; border-color:var(--accent,#006CB7); box-shadow:0 4px 0 var(--shadow-hard); }
+.proc-chip.active .num{ background:rgba(255,255,255,.28); color:#fff; }
+.proc-chip.done .num{ background:var(--brick-green); color:#fff; }
+
+.proc-detail{ display:grid; grid-template-columns:minmax(220px,360px) 1fr; gap:1.8rem; align-items:center;
+  background:#fff; border:3px solid rgba(0,0,0,.08); border-radius:20px; padding:1.6rem;
+  box-shadow:0 6px 0 var(--shadow-hard), 0 12px 22px var(--shadow); }
+.proc-media{ border-radius:16px; overflow:hidden; background:#FFF7EC; border:2px solid rgba(0,108,183,.14); }
+.proc-media img{ display:block; width:100%; height:auto; }
+.proc-no{ font-family:var(--font-pixel); font-size:.7rem; color:var(--accent,#006CB7); letter-spacing:1px; }
+.proc-text h3{ font-family:var(--font-disp); font-weight:800; font-size:1.5rem; margin:.3rem 0 .5rem; }
+.proc-desc{ font-size:1.06rem; color:var(--ink); font-weight:700; }
+.proc-tip{ margin-top:.7rem; background:var(--paper); border-left:5px solid var(--accent,#006CB7);
+  border-radius:0 12px 12px 0; padding:.7rem .9rem; font-size:.92rem; color:#444; }
+.proc-progress{ height:10px; background:var(--paper-2); border-radius:999px; overflow:hidden; margin:1.05rem 0; border:2px solid rgba(0,0,0,.06); }
+.proc-bar{ height:100%; width:14%; background:var(--accent,#006CB7); transition:width .3s ease; }
+.proc-nav{ display:flex; gap:.7rem; }
+.proc-nav .btn{ flex:1; justify-content:center; }
+
+@media(max-width:760px){ .proc-detail{ grid-template-columns:1fr; } }
