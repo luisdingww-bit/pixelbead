@@ -356,3 +356,13 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
 .mtab{ font-family:var(--font-disp); font-weight:800; font-size:.95rem; padding:.55rem 1.1rem; border-radius:999px; border:3px solid rgba(0,0,0,.12); background:#fff; cursor:pointer; color:#3a3f4a; transition:all .12s ease; }
 .mtab:hover{ transform:translateY(-2px); }
 .mtab.active{ background:var(--brick-red); color:#fff; border-color:var(--brick-red); box-shadow:0 4px 0 var(--shadow-hard); }
+
+/* ===== 掐丝珐琅 七道工序 ===== */
+.process-sec{ padding:4rem 0; background:linear-gradient(180deg,#fff 0%,#FFF7EC 100%); }
+.process-sec .steps{ display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:1.7rem 1.4rem; margin-top:2.2rem; }
+.step{ position:relative; background:#fff; border:3px solid rgba(0,0,0,.08); border-radius:18px; padding:1.2rem 1.1rem 1.3rem; box-shadow:0 6px 0 rgba(0,0,0,.06); }
+.step-no{ position:absolute; top:-17px; left:20px; width:38px; height:38px; border-radius:50%; background:var(--accent,#006CB7); color:#fff; font-weight:800; font-family:var(--font-disp); display:flex; align-items:center; justify-content:center; border:3px solid #fff; box-shadow:0 3px 8px rgba(0,0,0,.22); }
+.step-media{ border-radius:14px; overflow:hidden; background:#FFF7EC; border:2px solid rgba(0,108,183,.12); }
+.step-media img{ display:block; width:100%; height:auto; }
+.step h3{ margin:.85rem 0 .35rem; font-family:var(--font-disp); font-weight:800; font-size:1.12rem; }
+.step p{ font-size:.9rem; color:#565c68; line-height:1.55; }
