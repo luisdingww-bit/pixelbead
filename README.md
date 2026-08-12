@@ -73,7 +73,7 @@ python -m http.server 8080
 关键实现：Canvas 2D 像素绘制、等距（isometric）投影 3D 渲染、ASCII STL 立方体几何生成。
 
 ---
-© 2026 Louis Ding · 丁俊晖 · 由创作者用 ❤ 与 🧩 搭起来
+© 2026 LDPIXELBEAD · 由创作者用 ❤ 与 🧩 搭起来
 
 ## 📄 License
 本项目基于 [MIT License](./LICENSE) 开源，可自由使用、修改与分发，请保留版权声明。
