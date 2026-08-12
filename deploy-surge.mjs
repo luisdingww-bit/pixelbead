@@ -62,12 +62,11 @@ for (const item of INCLUDES) {
 }
 console.log('  ✓ 已复制:', INCLUDES.filter((i) => existsSync(join(__dirname, i))).join(', '));
 
-// 2) 逐个域名部署
-const token = process.env.SURGE_TOKEN;
+// 2) 逐个域名部署（使用本机 `surge login` 的缓存登录；不要传 --token，
+//    `surge token` 打印的串不能用于 --token 参数）
 for (const domain of DOMAINS) {
   log(`部署到 ${domain} ...`);
   const args = ['surge@latest', DIST, domain];
-  if (token) args.push('--token', token);
   const res = spawnSync('npx', ['--yes', ...args], { stdio: 'inherit' });
   if (res.status !== 0) {
     console.error(`\n\x1b[31m✗ 部署 ${domain} 失败（退出码 ${res.status}）\x1b[0m`);

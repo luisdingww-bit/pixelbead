@@ -49,7 +49,7 @@ python -m http.server 8080
    node deploy-surge.mjs
    ```
    - 多个端在 `deploy-surge.mjs` 顶部的 `DOMAINS` 数组里配置（默认 `pixelbead.surge.sh` + `pixelbead-2.surge.sh`，可任意增删改名）。
-   - 想免交互部署（如 CI）：先 `surge token` 拿到令牌，再 `set SURGE_TOKEN=xxxx && node deploy-surge.mjs`。
+   - 部署走本机 `surge login` 的**缓存登录**（无需 token）。注意：`surge token` 打印的串**不能**用于 `--token` 参数（Surge 怪癖），CI 场景需用 Surge 后台的真实 API Token。
    - 脚本会先复制出干净的 `.surge-dist/`（自动排除 `.git` / `.workbuddy` 等），再逐个 `surge` 上去，部署完自动清理。
 3. 访问：`https://pixelbead.surge.sh` 以及你配置的其它域名。
 
