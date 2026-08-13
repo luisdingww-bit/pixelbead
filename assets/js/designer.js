@@ -27,6 +27,11 @@
   let drawing = false;
   let undoStack = [], redoStack = [];
 
+  /* ---------- 边框（展示框） ---------- */
+  let frameOn = true, frameColor = '#E3000B';
+  const FRAME_PX = 22;
+  let FRAME = frameOn ? FRAME_PX : 0;
+
   /* ---------- 模块切换（像素拼豆 / 建筑）---------- */
   function getModule(){
     const p = new URLSearchParams(location.search).get('m');
@@ -53,14 +58,36 @@
 
   function setupCanvas(){
     CELL = Math.max(14, Math.floor(560/COLS));
-    canvas.width = COLS*CELL;
-    canvas.height = ROWS*CELL;
+    FRAME = frameOn ? FRAME_PX : 0;
+    canvas.width = COLS*CELL + FRAME*2;
+    canvas.height = ROWS*CELL + FRAME*2;
+  }
+
+  /* ---------- 边框绘制（乐高风：填色 + 倒角 + 凸点） ---------- */
+  function stud(c,x,y,r,col){
+    c.beginPath(); c.arc(x,y,r,0,Math.PI*2); c.fillStyle=col; c.fill();
+    c.beginPath(); c.arc(x-r*0.3,y-r*0.3,r*0.42,0,Math.PI*2); c.fillStyle='rgba(255,255,255,.35)'; c.fill();
+  }
+  function drawFrame(c){
+    const w=canvas.width, h=canvas.height;
+    c.fillStyle=frameColor; c.fillRect(0,0,w,h);
+    c.lineWidth=3; c.strokeStyle=shade(frameColor,-0.32); c.strokeRect(FRAME*0.5,FRAME*0.5,w-FRAME,h-FRAME);
+    c.lineWidth=2; c.strokeStyle=shade(frameColor,0.28); c.strokeRect(FRAME*0.5+3,FRAME*0.5+3,w-FRAME-6,h-FRAME-6);
+    const sr=Math.max(3,FRAME*0.20), step=FRAME*1.5, col=shade(frameColor,0.30);
+    for(let x=FRAME*0.5+step/2; x<w-FRAME*0.5; x+=step){ stud(c,x,FRAME*0.5+FRAME*0.34,sr,col); stud(c,x,h-FRAME*0.5-FRAME*0.34,sr,col); }
+    for(let y=FRAME*0.5+step/2; y<h-FRAME*0.5; y+=step){ stud(c,FRAME*0.5+FRAME*0.34,y,sr,col); stud(c,w-FRAME*0.5-FRAME*0.34,y,sr,col); }
   }
 
   function render(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(frameOn) drawFrame(ctx);
+    ctx.save(); ctx.translate(FRAME,FRAME);
     drawBeads(ctx, grid, COLS, ROWS, CELL, true);
+    ctx.restore();
     renderIso();
     updateStats();
+    iso.style.border = frameOn ? (Math.round(FRAME_PX*0.32))+'px solid '+frameColor : 'none';
+    iso.style.borderRadius = frameOn ? '10px' : '0';
   }
 
   /* ---------- 等距 3D 积木预览 ---------- */
@@ -129,7 +156,7 @@
     const rect=canvas.getBoundingClientRect();
     const sx=canvas.width/rect.width, sy=canvas.height/rect.height;
     const px=(e.clientX-rect.left)*sx, py=(e.clientY-rect.top)*sy;
-    const x=Math.floor(px/CELL), y=Math.floor(py/CELL);
+    const x=Math.floor((px-FRAME)/CELL), y=Math.floor((py-FRAME)/CELL);
     if(x<0||y<0||x>=COLS||y>=ROWS) return null;
     return {x,y};
   }
@@ -211,10 +238,19 @@
     img.src=url;
   });
 
-  /* ---------- 导出 PNG ---------- */
+  /* ---------- 导出 PNG（含边框） ---------- */
   function exportPNG(){
-    const sc=20; const off=document.createElement('canvas'); off.width=COLS*sc; off.height=ROWS*sc;
-    const octx=off.getContext('2d'); window.drawBeads(octx,grid,COLS,ROWS,sc,true);
+    const sc=20; const fr = frameOn ? Math.round(FRAME_PX*sc/30) : 0;
+    const off=document.createElement('canvas'); off.width=COLS*sc+fr*2; off.height=ROWS*sc+fr*2;
+    const octx=off.getContext('2d');
+    if(frameOn){
+      octx.fillStyle=frameColor; octx.fillRect(0,0,off.width,off.height);
+      octx.lineWidth=4; octx.strokeStyle=shade(frameColor,-0.32); octx.strokeRect(fr*0.5,fr*0.5,off.width-fr,off.height-fr);
+      octx.lineWidth=2; octx.strokeStyle=shade(frameColor,0.28); octx.strokeRect(fr*0.5+4,fr*0.5+4,off.width-fr-8,off.height-fr-8);
+    }
+    octx.save(); octx.translate(fr,fr);
+    window.drawBeads(octx,grid,COLS,ROWS,sc,true);
+    octx.restore();
     off.toBlob(b=>downloadBlob(b,'拼豆图案.png'));
   }
 
@@ -242,6 +278,14 @@
     };
     // 底板
     addBox(0,0,0,COLS*pitch,ROWS*pitch,0.18);
+    // 边框墙（展示框，可随件一起 3D 打印）
+    if(frameOn){
+      const t=0.5, zh=0.9;
+      addBox(-t,0,0.18, COLS*pitch+2*t, t, zh);
+      addBox(-t,ROWS*pitch-t,0.18, COLS*pitch+2*t, t, zh);
+      addBox(-t,0,0.18, t, ROWS*pitch, zh);
+      addBox(COLS*pitch,0,0.18, t, ROWS*pitch, zh);
+    }
     // 每颗豆 = 一个凸点方块
     for(let y=0;y<ROWS;y++) for(let x=0;x<COLS;x++){
       if(!grid[y][x]) continue;
@@ -281,11 +325,29 @@
   document.getElementById('btnClear').addEventListener('click',()=>{ snapshot(); grid=blankGrid(COLS,ROWS); render(); toast('已清空'); });
   document.getElementById('btnPhoto').addEventListener('click',()=>fileInput.click());
 
+  /* ---------- 边框 UI ---------- */
+  const FRAME_COLORS=[{name:'红',hex:'#E3000B'},{name:'木',hex:'#6e4a2e'},{name:'黑',hex:'#1c1c1c'},{name:'蓝',hex:'#006CB7'},{name:'绿',hex:'#00A650'}];
+  function buildFrameUI(){
+    const fc=document.getElementById('frameColors'); if(!fc) return; fc.innerHTML='';
+    FRAME_COLORS.forEach(c=>{
+      const s=document.createElement('div'); s.className='fs'; s.style.background=c.hex; s.title=c.name;
+      if(c.hex===frameColor) s.classList.add('on');
+      s.addEventListener('click',()=>{ frameColor=c.hex; fc.querySelectorAll('.fs').forEach(x=>x.classList.remove('on')); s.classList.add('on'); if(frameOn) render(); });
+      fc.appendChild(s);
+    });
+    const btn=document.getElementById('btnFrame');
+    if(btn){
+      btn.classList.toggle('on',frameOn); btn.textContent=frameOn?'边框：开':'边框：关';
+      btn.onclick=()=>{ frameOn=!frameOn; btn.classList.toggle('on',frameOn); btn.textContent=frameOn?'边框：开':'边框：关'; setupCanvas(); render(); };
+    }
+  }
+
   /* ---------- 启动 ---------- */
   setupCanvas(); grid=blankGrid(COLS,ROWS);
   setTool('pen');
   iso.width=600; iso.height=440;
   applyModule(MODULE);                 // 按 URL ?m= 载入对应模块的调色板 / 预设 / 首个模板
+  buildFrameUI();
   document.querySelectorAll('#moduleTabs .mtab').forEach(b=>{
     b.addEventListener('click',()=>applyModule(b.dataset.mod));
   });
