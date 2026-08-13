@@ -88,3 +88,31 @@
 @media(max-width:860px){
   .studio-wrap{ grid-template-columns:1fr; }
 }
+
+/* ---------- 示例纹样画廊 ---------- */
+.ex-wrap{ background:linear-gradient(180deg,#FFF7EC 0%, #fff 100%); padding:3rem 0 3.2rem; }
+.ex-wrap .hero-badge{ display:inline-block; margin-bottom:.8rem; }
+.ex-wrap h2{ font-family:var(--font-disp); font-weight:800; font-size:1.8rem; margin:.2rem 0 .5rem; }
+.ex-wrap .lead{ max-width:60ch; color:#4a505c; margin-bottom:1.6rem; line-height:1.6; }
+.ex-gallery{
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(190px,1fr)); gap:1.1rem;
+}
+.ex-card{
+  text-align:left; border:3px solid rgba(0,0,0,.1); border-radius:16px; background:#fff;
+  padding:.7rem .7rem .9rem; cursor:pointer; font:inherit; color:inherit;
+  box-shadow:0 5px 0 var(--shadow-hard); transition:transform .12s ease, box-shadow .12s ease;
+}
+.ex-card:hover{ transform:translateY(-4px); box-shadow:0 9px 0 var(--shadow-hard); }
+.ex-card:active{ transform:translateY(0); box-shadow:0 3px 0 var(--shadow-hard); }
+.ex-thumb{
+  border-radius:11px; overflow:hidden; background:#10151c; line-height:0;
+  border:2px solid rgba(0,0,0,.12);
+}
+.ex-svg{ display:block; width:100%; height:auto; }
+.ex-name{ font-family:var(--font-disp); font-weight:800; font-size:1.05rem; margin:.55rem 0 .15rem; }
+.ex-desc{ font-size:.78rem; color:#6a707c; line-height:1.45; min-height:2.2em; }
+.ex-tags{ display:flex; gap:.35rem; flex-wrap:wrap; margin-top:.55rem; }
+.ex-tag{
+  font-size:.68rem; font-weight:700; color:var(--brick-blue);
+  background:rgba(0,108,183,.1); border-radius:999px; padding:.12rem .55rem;
+}

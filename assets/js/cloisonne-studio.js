@@ -245,6 +245,49 @@
     toast('已导出 PNG ✦');
   }
 
+  /* ---------- 示例画廊：一键载入可编辑纹样 ---------- */
+  function drawPolyline(pts, closed){
+    for(let i=0;i<pts.length-1;i++) drawSeg({x:pts[i][0],y:pts[i][1]},{x:pts[i+1][0],y:pts[i+1][1]});
+    if(closed && pts.length>1) drawSeg({x:pts[pts.length-1][0],y:pts[pts.length-1][1]},{x:pts[0][0],y:pts[0][1]});
+  }
+  // 把一整个示例（掐丝 + 点蓝 + 贴珠）铺到画板，之后用户仍可自由编辑
+  function loadExample(spec){
+    snapshot();
+    ctx.clearRect(0,0,W,H);
+    wireColor = spec.wireHex; wireW = spec.wireW || 5;
+    if(wireSl){ wireSl.value = wireW; wireVal.textContent = wireW; }
+    buildSwatches(document.getElementById('wirePalette'), WIRE_COLORS, h=>h===wireColor, h=>wireColor=h);
+    // 1) 先掐全部丝线（闭合线围出区域，开放线作装饰）
+    for(const c of spec.cells){ drawPolyline(c.pts, !c.open); }
+    // 2) 再点蓝（每区域填对应釉色）
+    for(const c of spec.cells){
+      if(c.open || !c.fill) continue;
+      const seed = window.CLOISONNE_CENTROID(c.pts);
+      fillColor = c.fill;
+      floodFill({x:seed[0], y:seed[1]});
+    }
+    // 3) 最后贴鎏金珠
+    for(const c of spec.cells){ if(c.bead) stampBead({x:c.bead[0], y:c.bead[1]}); }
+    scheduleSave();
+    document.getElementById('clCanvas').scrollIntoView({behavior:'smooth', block:'center'});
+    toast('已载入示例：'+spec.name+' ✦ 可继续自由编辑');
+  }
+  function buildGallery(){
+    const gal = document.getElementById('exGallery');
+    if(!gal || !window.CLOISONNE_EXAMPLES) return;
+    window.CLOISONNE_EXAMPLES.forEach(spec=>{
+      const card = document.createElement('button'); card.className = 'ex-card'; card.type = 'button';
+      const tags = spec.tags.map(t=>'<span class="ex-tag">'+t+'</span>').join('');
+      card.innerHTML =
+        '<div class="ex-thumb">'+window.buildExampleSVG(spec)+'</div>'+
+        '<div class="ex-name">'+spec.name+'</div>'+
+        '<div class="ex-desc">'+spec.desc+'</div>'+
+        '<div class="ex-tags">'+tags+'</div>';
+      card.addEventListener('click', ()=>loadExample(spec));
+      gal.appendChild(card);
+    });
+  }
+
   /* ---------- 绑定 UI ---------- */
   document.querySelectorAll('.st-tool').forEach(el=>el.addEventListener('click',()=>setTool(el.dataset.tool)));
   document.getElementById('btnUndo').addEventListener('click',undo);
@@ -266,6 +309,6 @@
   const plateSeg=document.querySelector('.st-seg.plate');
   if(plateSeg){ PLATES.forEach(p=>{ const b=document.createElement('button'); b.dataset.hex=p.hex; b.textContent=p.name;
     b.addEventListener('click',()=>setPlate(p.hex)); plateSeg.appendChild(b); }); setPlate(plateColor); }
-  buildChips(); setStep(0); setTool('wire'); loadWork();
+  buildChips(); setStep(0); setTool('wire'); loadWork(); buildGallery();
   document.getElementById('moduleLabel').textContent='掐丝珐琅工作室';
 })();
