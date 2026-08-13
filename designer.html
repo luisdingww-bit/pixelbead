@@ -31,12 +31,12 @@
     <!-- 核心：工具 -->
     <h4>🛠 工具</h4>
     <div class="tool-row">
-      <div class="tool active" data-tool="pen"><span class="gi">✏️</span>画笔</div>
-      <div class="tool" data-tool="eraser"><span class="gi">🧽</span>橡皮</div>
-      <div class="tool" data-tool="fill"><span class="gi">🪣</span>填充</div>
-      <div class="tool" data-tool="picker"><span class="gi">💉</span>取色</div>
-      <div class="tool" id="btnUndo"><span class="gi">↩️</span>撤销</div>
-      <div class="tool" id="btnRedo"><span class="gi">↪️</span>重做</div>
+      <div class="tool active" data-tool="pen" title="画笔：左键画一格（右键任意处可取色）"><span class="gi">✏️</span>画笔</div>
+      <div class="tool" data-tool="eraser" title="橡皮：左键擦除一格"><span class="gi">🧽</span>橡皮</div>
+      <div class="tool" data-tool="fill" title="填充：点击闭合区域一键填色"><span class="gi">🪣</span>填充</div>
+      <div class="tool" data-tool="picker" title="取色：点击吸取画板上已有颜色"><span class="gi">💉</span>取色</div>
+      <div class="tool" id="btnUndo" title="撤销（Ctrl+Z）"><span class="gi">↩️</span>撤销</div>
+      <div class="tool" id="btnRedo" title="重做（Ctrl+Y）"><span class="gi">↪️</span>重做</div>
     </div>
 
     <!-- 核心：调色板 -->
@@ -72,11 +72,12 @@
 
       <h4>📐 形状工具</h4>
       <div class="tool-row" id="shapeRow">
-        <div class="tool" data-shape="line"><span class="gi">📏</span>直线</div>
-        <div class="tool" data-shape="rect"><span class="gi">⬛</span>方块</div>
-        <div class="tool" data-shape="circle"><span class="gi">⚪</span>圆</div>
+        <div class="tool" data-shape="line" title="直线：拖拽画直线"><span class="gi">📏</span>直线</div>
+        <div class="tool" data-shape="rect" title="方块：拖拽画矩形"><span class="gi">⬛</span>方块</div>
+        <div class="tool" data-shape="circle" title="圆：从圆心拖拽到半径"><span class="gi">⚪</span>圆</div>
+        <div class="tool on" id="shapeFill" title="切换形状填充：实心 / 描边（空心）"><span class="gi">🔴</span>实心</div>
       </div>
-      <p class="hint">选形状后，在画板上按住拖拽即可绘制。</p>
+      <p class="hint">选形状后，在画板上按住拖拽即可绘制；画完自动回到画笔。可切换「实心」画空心圆/方块。</p>
 
       <h4>📐 板型预设</h4>
       <div class="board-presets" id="boardPresets">

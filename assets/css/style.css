@@ -244,9 +244,11 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
 .tool-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; margin-bottom:.9rem; }
 .tool{ display:flex; flex-direction:column; align-items:center; gap:.2rem; padding:.55rem .2rem; border-radius:10px;
   border:2px solid rgba(0,0,0,.12); background:var(--paper); cursor:pointer; font-size:.72rem; font-weight:700; transition:.1s; }
-.tool:hover{ background:var(--paper-2); }
-.tool.active{ background:var(--brick-blue); color:#fff; border-color:rgba(0,0,0,.2); }
-.tool .gi{ font-size:1.2rem; }
+.tool:hover{ background:var(--paper-2); transform:translateY(-1px); }
+.tool.active{ background:var(--brick-blue); color:#fff; border-color:rgba(0,0,0,.25);
+  box-shadow:0 3px 0 var(--shadow-hard), 0 0 0 3px rgba(0,112,201,.18); transform:translateY(-2px); }
+.tool.active .gi{ transform:scale(1.18); filter:drop-shadow(0 1px 0 rgba(0,0,0,.25)); }
+.tool .gi{ font-size:1.2rem; transition:transform .12s; }
 #symRow .tool, #shapeRow .tool{ font-size:.68rem; }
 
 .palette{ display:grid; grid-template-columns:repeat(7,1fr); gap:.35rem; }
@@ -276,7 +278,8 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
 .canvas-stage{ background:#fff; border-radius:14px; border:3px solid rgba(0,0,0,.1); padding:1rem;
   box-shadow:0 4px 0 var(--shadow-hard), 0 8px 14px var(--shadow); display:flex; flex-direction:column; align-items:center; gap:.8rem; }
 #beadCanvas{ image-rendering:pixelated; border-radius:8px; background:
-  repeating-conic-gradient(#f3f3f3 0 25%, #fff 0 50%) 0 0/28px 28px; cursor:crosshair; touch-action:none; max-width:100%; }
+  repeating-conic-gradient(#f3f3f3 0 25%, #fff 0 50%) 0 0/28px 28px; cursor:crosshair; touch-action:none;
+  -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; max-width:100%; }
 .stage-tools{ display:flex; gap:.6rem; flex-wrap:wrap; align-items:center; justify-content:center; }
 .mini-select{ font-family:var(--font-body); font-weight:700; padding:.4em .6em; border-radius:8px; border:2px solid rgba(0,0,0,.15); background:#fff; }
 

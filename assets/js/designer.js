@@ -27,6 +27,7 @@
   let tool = 'pen';
   let symmetry = 'none';       // none | h | v | quad
   let shapeMode = null;        // null | line | rect | circle
+  let shapeFill = true;        // 形状是否填充（圆/方块）；false = 描边
   let drawing = false;
   let undoStack = [], redoStack = [];
   let shapeStart = null;       // 形状拖拽起点
@@ -285,6 +286,16 @@
     const w=canvas.width, h=canvas.height, bx=FRAME, by=FRAME, bw=w-FRAME*2, bh=h-FRAME*2;
     const t=getTheme(); if(t&&t.draw) t.draw(c,bx,by,bw,bh,frameColor);
   }
+  /* 对称镜像参考轴（实时虚线，帮助对齐） */
+  function drawSymmetryGuides(){
+    if(symmetry==='none') return;
+    ctx.save();
+    ctx.strokeStyle='rgba(20,20,20,.22)'; ctx.lineWidth=1; ctx.setLineDash([6,5]);
+    const cx=FRAME+COLS*CELL/2, cy=FRAME+ROWS*CELL/2;
+    if(symmetry==='h'||symmetry==='quad'){ ctx.beginPath(); ctx.moveTo(cx,FRAME); ctx.lineTo(cx,canvas.height-FRAME); ctx.stroke(); }
+    if(symmetry==='v'||symmetry==='quad'){ ctx.beginPath(); ctx.moveTo(FRAME,cy); ctx.lineTo(canvas.width-FRAME,cy); ctx.stroke(); }
+    ctx.restore();
+  }
 
   function renderCanvas(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -297,6 +308,7 @@
       ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fillStyle=current; ctx.fill(); }
       ctx.globalAlpha=1; }
     ctx.restore();
+    drawSymmetryGuides();
   }
   function renderExtras(){
     renderIso();
@@ -427,15 +439,18 @@
       if(e2>-dy){ err-=dy; x+=sx; } if(e2<dx){ err+=dx; y+=sy; } }
     return cells;
   }
-  function rectCells(x0,y0,x1,y1){
+  function rectCells(x0,y0,x1,y1,fill){
     const cells=[]; const xa=Math.min(x0,x1), xb=Math.max(x0,x1), ya=Math.min(y0,y1), yb=Math.max(y0,y1);
-    for(let y=ya;y<=yb;y++) for(let x=xa;x<=xb;x++) cells.push([x,y]);
+    for(let y=ya;y<=yb;y++) for(let x=xa;x<=xb;x++){
+      if(fill || x===xa||x===xb||y===ya||y===yb) cells.push([x,y]);   // 描边模式仅保留边框
+    }
     return cells;
   }
-  function circleCells(cx,cy,r){
-    const cells=[]; const r2=r*r;
+  function circleCells(cx,cy,r,fill){
+    const cells=[]; const r2=r*r, ri=(r-0.9)*(r-0.9);
     for(let y=Math.round(cy-r);y<=Math.round(cy+r);y++) for(let x=Math.round(cx-r);x<=Math.round(cx+r);x++){
-      const dx=x-cx, dy=y-cy; if(dx*dx+dy*dy<=r2) cells.push([x,y]);
+      const dx=x-cx, dy=y-cy, d=dx*dx+dy*dy;
+      if(d<=r2 && (fill || d>=ri)) cells.push([x,y]);                // 描边模式仅保留外环
     }
     return cells;
   }
@@ -443,8 +458,8 @@
     if(!shapeStart) return null;
     let cells=[];
     if(shapeMode==='line') cells=lineCells(shapeStart.x,shapeStart.y,x1,y1);
-    else if(shapeMode==='rect') cells=rectCells(shapeStart.x,shapeStart.y,x1,y1);
-    else if(shapeMode==='circle'){ const r=Math.sqrt((x1-shapeStart.x)**2+(y1-shapeStart.y)**2); cells=circleCells(shapeStart.x,shapeStart.y,r); }
+    else if(shapeMode==='rect') cells=rectCells(shapeStart.x,shapeStart.y,x1,y1,shapeFill);
+    else if(shapeMode==='circle'){ const r=Math.sqrt((x1-shapeStart.x)**2+(y1-shapeStart.y)**2); cells=circleCells(shapeStart.x,shapeStart.y,r,shapeFill); }
     return cells;
   }
   function commitShape(x1,y1){
@@ -470,8 +485,15 @@
   });
   canvas.addEventListener('pointermove',e=>{ if(!drawing) return; const c=cellFromEvent(e); if(!c) return; queueDraw(c); });
   window.addEventListener('pointerup',e=>{ if(!drawing) return; drawing=false;
-    if(shapeMode){ const c=cellFromEvent(e); if(c) commitShape(c.x,c.y); shapeStart=null; pending=null; }
+    if(shapeMode){ const c=cellFromEvent(e); if(c) commitShape(c.x,c.y);
+      // 形状画完自动退出，回到画笔
+      shapeMode=null; shapeStart=null; pending=null;
+      document.querySelectorAll('#shapeRow .tool').forEach(x=>x.classList.remove('active'));
+      setTool('pen'); }
     render(); });
+  /* 右键画板任意处 = 取色（不切换工具，方便配色） */
+  canvas.addEventListener('contextmenu',e=>{ e.preventDefault(); const c=cellFromEvent(e);
+    if(c && grid[c.y][c.x]){ current=grid[c.y][c.x]; setCurrentSwatch(); if(tool==='eraser') setTool('pen'); toast('右键取色'); } });
 
   /* ---------- 调色板（支持品牌色库） ---------- */
   let activeBrand = '';          // '' = 通用
@@ -934,6 +956,10 @@
       if(shapeMode){ setTool('pen'); toast('形状：'+b.textContent.trim()+'（画板拖拽绘制）'); }
       else toast('形状：关'); });
   });
+  /* 形状填充（实心 / 描边）切换 */
+  const shapeFillBtn=document.getElementById('shapeFill');
+  if(shapeFillBtn){ shapeFillBtn.classList.toggle('on', shapeFill);
+    shapeFillBtn.addEventListener('click',()=>{ shapeFill=!shapeFill; shapeFillBtn.classList.toggle('on', shapeFill); toast('形状填充：'+(shapeFill?'开（实心）':'关（描边）')); }); }
   /* ---------- 品牌色库切换 ---------- */
   document.getElementById('brandSel').addEventListener('change',e=>{
     activeBrand=e.target.value; buildPalette();
