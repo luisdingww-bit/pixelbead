@@ -489,3 +489,21 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
   .landmark-grid{ grid-template-columns:repeat(2,1fr); gap:1rem; }
   .landmark-card .city b{ font-size:1rem; }
 }
+
+/* 像素图片例子画廊 */
+.pixel-examples{ padding:64px 0; background:linear-gradient(180deg,#ffffff 0%, #fdf2ff 100%); }
+.pixel-example-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));
+  gap:18px;
+}
+.px-fig{ margin:0; background:#fff; border:3px solid rgba(0,0,0,.08); border-radius:16px; overflow:hidden; box-shadow:0 6px 0 var(--shadow-hard), 0 12px 22px var(--shadow); transition:transform .15s ease, box-shadow .15s ease; }
+.px-fig:hover{ transform:translateY(-6px); box-shadow:0 9px 0 var(--shadow-hard), 0 18px 30px var(--shadow); }
+.px-fig a{ display:block; text-decoration:none; color:inherit; }
+.px-fig img{ width:100%; aspect-ratio:1; object-fit:cover; image-rendering:pixelated; display:block; background:#0b1020; }
+.px-fig figcaption{ display:flex; flex-direction:column; gap:2px; padding:10px 12px; }
+.px-fig figcaption b{ font-family:var(--font-disp); font-weight:800; font-size:1.05rem; color:var(--ink); }
+.px-fig figcaption small{ color:#7a6f80; font-weight:600; font-size:.74rem; }
+@media(max-width:560px){
+  .pixel-example-grid{ grid-template-columns:repeat(2,1fr); gap:12px; }
+}
