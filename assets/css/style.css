@@ -305,6 +305,9 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
   padding:.8em 1.4em; border-radius:12px; font-weight:700; opacity:0; transition:.25s; z-index:99; pointer-events:none; }
 .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 
+/* ---------- 设计器移动端折叠开关 ---------- */
+.panel-toggle-m{ display:none; }
+
 /* ---------- 响应式 ---------- */
 @media(max-width:960px){
   .hero-grid{ grid-template-columns:1fr; }
@@ -314,7 +317,23 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
   .buzz .stats{ grid-template-columns:repeat(2,1fr); }
   .buzz .quotes{ grid-template-columns:1fr; }
   .teaser{ grid-template-columns:1fr; }
-  .designer-wrap{ grid-template-columns:1fr; }
+  /* 设计器：竖向排列，画板置顶，左栏工具可折叠 */
+  .designer-wrap{ display:flex; flex-direction:column; padding-bottom:2rem; }
+  .canvas-stage{ order:-1; }
+  .panel-toggle-m{ display:flex; width:100%; align-items:center; justify-content:space-between;
+    padding:.7rem 1rem; margin-bottom:.6rem; border-radius:12px; border:3px solid rgba(0,0,0,.12);
+    background:var(--brick-blue); color:#fff; font-weight:800; font-family:var(--font-disp); cursor:pointer; }
+  .panel-toggle-m .caret{ transition:transform .2s ease; }
+  #leftPanel.collapsed .tool-row,
+  #leftPanel.collapsed h4,
+  #leftPanel.collapsed .palette,
+  #leftPanel.collapsed .mini-select,
+  #leftPanel.collapsed .frame-colors,
+  #leftPanel.collapsed .preset-row,
+  #leftPanel.collapsed .hint,
+  #leftPanel.collapsed #textInput,
+  #leftPanel.collapsed #btnText{ display:none; }
+  #leftPanel.collapsed .panel-toggle-m .caret{ transform:rotate(-90deg); }
   .foot-grid{ grid-template-columns:1fr; }
 }
 @media(max-width:560px){

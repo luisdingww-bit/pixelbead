@@ -214,7 +214,7 @@
     const t=getTheme(); if(t&&t.draw) t.draw(c,bx,by,bw,bh,frameColor);
   }
 
-  function render(){
+  function renderCanvas(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     if(frameOn) drawFrame(ctx);
     ctx.save(); ctx.translate(FRAME,FRAME);
@@ -225,10 +225,37 @@
       ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fillStyle=current; ctx.fill(); }
       ctx.globalAlpha=1; }
     ctx.restore();
+  }
+  function renderExtras(){
     renderIso();
     updateStats();
     iso.style.border = frameOn ? (Math.round(FRAME_PX*0.32))+'px solid '+frameColor : 'none';
     iso.style.borderRadius = frameOn ? '10px' : '0';
+  }
+  function render(){ renderCanvas(); renderExtras(); }
+
+  /* ---------- 性能优化：拖动过程中的高频调用做 rAF 合并 ----------
+     画板重绘(renderCanvas)很轻，但 3D 预览(renderIso)在大网格下要重画几万颗立方体，
+     不能每次 pointermove 都跑。因此拖动时用 requestAnimationFrame 合并，并把 3D/统计
+     延后到空闲帧，只在松手时做完整 render。 */
+  let _extrasQueued=false;
+  function scheduleExtras(){
+    if(_extrasQueued) return;
+    _extrasQueued=true;
+    requestAnimationFrame(()=>{ _extrasQueued=false; renderExtras(); });
+  }
+  let _moveQueued=false, _moveCell=null;
+  function queueDraw(c){
+    _moveCell=c;
+    if(_moveQueued) return;
+    _moveQueued=true;
+    requestAnimationFrame(()=>{
+      _moveQueued=false;
+      if(!drawing) return;
+      if(shapeMode){ pending=previewShape(_moveCell.x,_moveCell.y); renderCanvas(); }
+      else if(tool==='pen'||tool==='eraser'){ applyTool(_moveCell.x,_moveCell.y); renderCanvas(); }
+      scheduleExtras();
+    });
   }
 
   /* ---------- 等距 3D 积木预览 ---------- */
@@ -366,14 +393,13 @@
   }
   canvas.addEventListener('pointerdown',e=>{ const c=cellFromEvent(e); if(!c) return;
     snapshot(); drawing=true; canvas.setPointerCapture(e.pointerId);
-    if(shapeMode){ shapeStart=c; pending=previewShape(c.x,c.y); render(); }
-    else { applyTool(c.x,c.y); render(); }
+    if(shapeMode){ shapeStart=c; pending=previewShape(c.x,c.y); renderCanvas(); scheduleExtras(); }
+    else { applyTool(c.x,c.y); renderCanvas(); scheduleExtras(); }
   });
-  canvas.addEventListener('pointermove',e=>{ if(!drawing) return; const c=cellFromEvent(e); if(!c) return;
-    if(shapeMode){ pending=previewShape(c.x,c.y); render(); }
-    else if(tool==='pen'||tool==='eraser'){ applyTool(c.x,c.y); render(); } });
+  canvas.addEventListener('pointermove',e=>{ if(!drawing) return; const c=cellFromEvent(e); if(!c) return; queueDraw(c); });
   window.addEventListener('pointerup',e=>{ if(!drawing) return; drawing=false;
-    if(shapeMode){ const c=cellFromEvent(e); if(c) commitShape(c.x,c.y); shapeStart=null; pending=null; render(); } });
+    if(shapeMode){ const c=cellFromEvent(e); if(c) commitShape(c.x,c.y); shapeStart=null; pending=null; }
+    render(); });
 
   /* ---------- 调色板（支持品牌色库） ---------- */
   let activeBrand = '';          // '' = 通用
@@ -803,6 +829,19 @@
   iso.width=600; iso.height=440;
   applyModule(MODULE);                 // 按 URL ?m= 载入对应模块的调色板 / 预设 / 首个模板
   buildFrameUI();
+
+  /* ---------- 移动端：左栏工具抽屉折叠 ---------- */
+  const leftToggle=document.getElementById('leftToggle');
+  const leftPanel=document.getElementById('leftPanel');
+  if(leftToggle && leftPanel){
+    const mq=window.matchMedia('(max-width:960px)');
+    if(mq.matches){ leftPanel.classList.add('collapsed'); leftToggle.setAttribute('aria-expanded','false'); }
+    leftToggle.addEventListener('click',()=>{
+      const collapsed=leftPanel.classList.toggle('collapsed');
+      leftToggle.setAttribute('aria-expanded', collapsed?'false':'true');
+    });
+  }
+
   document.querySelectorAll('#moduleTabs .mtab').forEach(b=>{
     b.addEventListener('click',()=>applyModule(b.dataset.mod));
   });
