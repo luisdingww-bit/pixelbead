@@ -450,7 +450,7 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
 }
 .landmark-card{
   display:block;
-  background:linear-gradient(180deg, #fff 0%, #f3f9ff 100%);
+  background:linear-gradient(180deg, #bfe3ff 0%, #eaf6ff 100%);
   border-radius:18px;
   border:3px solid rgba(0,0,0,.08);
   overflow:hidden;
@@ -464,11 +464,11 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
   box-shadow:0 9px 0 var(--shadow-hard), 0 18px 30px var(--shadow);
 }
 .landmark-card canvas{
-  width:100%;
-  aspect-ratio:1;
-  image-rendering:pixelated;
-  background:#fff;
   display:block;
+  width:100%;
+  height:auto;
+  image-rendering:pixelated;
+  background:transparent;
 }
 .landmark-card .city{
   text-align:center;

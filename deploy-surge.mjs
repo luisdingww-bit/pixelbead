@@ -50,7 +50,10 @@ function log(msg) {
 
 // 1) 构建干净的部署目录
 log('构建干净部署目录 .surge-dist ...');
-if (existsSync(DIST)) rmSync(DIST, { recursive: true, force: true });
+if (existsSync(DIST)) {
+  try { rmSync(DIST, { recursive: true, force: true }); }
+  catch (e) { console.warn('  ⚠ 清理旧目录失败，继续覆盖：', e.message); }
+}
 mkdirSync(DIST, { recursive: true });
 for (const item of INCLUDES) {
   const src = join(__dirname, item);
@@ -78,6 +81,10 @@ for (const domain of DOMAINS) {
 }
 
 // 3) 清理临时目录
-rmSync(DIST, { recursive: true, force: true });
-log('清理 .surge-dist 完成。');
+try {
+  rmSync(DIST, { recursive: true, force: true });
+  log('清理 .surge-dist 完成。');
+} catch (e) {
+  console.warn('  ⚠ 清理 .surge-dist 失败，可手动删除：', e.message);
+}
 console.log('\n🎉 全部端部署结束。');

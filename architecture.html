@@ -122,8 +122,8 @@ document.addEventListener('DOMContentLoaded',function(){
   /* 渲染世界地标卡片 */
   var grid=document.getElementById('landmark-grid');
   if(grid && window.MODULES && window.MODULES.architecture && window.drawBeads){
-    var patterns=window.MODULES.architecture.patterns.filter(function(p){ return p.cols===20 && p.rows===20; });
-    var cell=10;
+    var patterns=window.MODULES.architecture.patterns.filter(function(p){ return p.landmark; });
+    var cell=8;
     patterns.forEach(function(p){
       var card=document.createElement('a'); card.className='landmark-card reveal'; card.href='designer.html?m=architecture&p='+encodeURIComponent(p.name);
       var cv=document.createElement('canvas'); cv.width=p.cols*cell; cv.height=p.rows*cell;

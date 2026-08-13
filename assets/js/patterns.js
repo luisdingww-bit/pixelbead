@@ -225,266 +225,217 @@ const ARCH_PATTERNS = [
 /* =========================================================
    世界地标像素图案（城市风景系列）
    ========================================================= */
-const LMAP = {
-  '.':'#7EC8FF', // 天空
-  'W':'#FCFCFC', // 云/白墙
-  'K':'#1A1A1A', // 黑
-  'S':'#5F6368', // 钢/深灰
-  'G':'#00A650', // 绿（自由女神/草地）
-  'B':'#E3000B', // 砖红
-  'Y':'#FFD500', // 金/金字塔
-  'N':'#1B2A6B', // 海军蓝
-  'R':'#6B4226', // 棕
-  'E':'#006CB7', // 蓝
-  'C':'#00B6C4', // 青
-  'M':'#7BE0AD', // 薄荷（山水/草地）
-  'O':'#C8A06A', // 暖石
-  'P':'#FFC2D9'  // 浅粉
-};
-function landmarkMap(name, rows){
-  const data=[];
-  for(let y=0;y<rows.length;y++){
-    const row=[];
-    for(let x=0;x<rows[y].length;x++){
-      const ch=rows[y][x];
-      row.push(LMAP[ch] || null);
+/* =========================================================
+   世界地标像素图案（城市风景系列）—— 高还原度手绘剪影
+   全部程序化生成清晰轮廓；天空留透明，由卡片背景衬托。
+   注：C() 在加载时读取 pixel 调色板，颜色名须为 PALETTE 中的名称。
+   ========================================================= */
+
+/* ---- 埃菲尔铁塔（巴黎）---- */
+const landmark_eiffel = makeGrid(20,34,(x,y,c,r)=>{
+  const cx=(c-1)/2, dx=Math.abs(x-cx);
+  let hw;
+  if(y<=2) hw=0.3;
+  else if(y<=11) hw=0.8+(y-3)*0.16;
+  else if(y===12) hw=3.6;
+  else if(y<=21) hw=3.1+(y-13)*0.20;
+  else if(y===22) hw=5.8;
+  else hw=5.3+(y-23)*0.45;
+  if(dx<=hw){
+    if(y===12||y===22) return C('黑');
+    if(dx>=hw-0.45) return C('深灰');
+    return C('灰');
+  }
+  return null;
+});
+
+/* ---- 东京塔（东京）---- */
+const landmark_tokyo = makeGrid(18,32,(x,y,c,r)=>{
+  const cx=(c-1)/2, dx=Math.abs(x-cx);
+  let hw;
+  if(y<=2) hw=0.3;
+  else if(y<=10) hw=0.9+(y-3)*0.20;
+  else if(y===11) hw=3.8;
+  else if(y<=19) hw=3.2+(y-12)*0.22;
+  else if(y===20) hw=6.0;
+  else hw=5.4+(y-21)*0.42;
+  if(dx<=hw){
+    if(y===11||y===20) return C('白');
+    if(dx>=hw-0.4) return C('酒红');
+    return C('砖红');
+  }
+  return null;
+});
+
+/* ---- 大本钟（伦敦）---- */
+const landmark_bigben = makeGrid(16,34,(x,y,c,r)=>{
+  const cx=(c-1)/2, dx=Math.abs(x-cx);
+  if(y<8){
+    const w=(7-y)*0.55;
+    if(dx<=w){ if(dx>=w-0.4) return C('黑'); return C('白'); }
+  }
+  const cyc=22;
+  if(y>=19&&y<=25){
+    const d=Math.sqrt((x-cx)**2+(y-cyc)**2);
+    if(d<=2.4){ if(d>=2.0) return C('黑'); return C('白'); }
+  }
+  if(y>=8&&y<=27&&dx<=3.2){
+    if(dx>=3.0) return C('黑');
+    return C('砖红');
+  }
+  if(y>=28&&y<=33&&dx<=4.2) return C('浅棕');
+  return null;
+});
+
+/* ---- 天坛（北京）---- */
+const landmark_tiantan = makeGrid(26,26,(x,y,c,r)=>{
+  const cx=(c-1)/2, dx=Math.abs(x-cx);
+  function roof(yTop,yBot,hwTop,hwBot,col,edge){
+    if(y>=yTop&&y<=yBot){
+      const t=(y-yTop)/(yBot-yTop);
+      const hw=hwTop+(hwBot-hwTop)*t;
+      if(dx<=hw){ if(dx>=hw-0.5) return edge; return col; }
     }
-    data.push(row);
-  }
-  return { name, cols:rows[0].length, rows:rows.length, data };
-}
-
-/* ---- 字符图地标 ---- */
-const landmark_eiffel = landmarkMap('埃菲尔铁塔', [
-  '....................',
-  '..........K.........',
-  '..........K.........',
-  '.........KKK........',
-  '.........KKK........',
-  '..........K.........',
-  '..........K.........',
-  '.........KSK........',
-  '........KSSSK.......',
-  '.......KSSSSSK......',
-  '......KSSSSSSSK.....',
-  '.....KSSSSSSSSSK....',
-  '....KSSSSSSSSSSSK...',
-  '...KSSSSSSSSSSSSSK..',
-  '..KSSSSSSSSSSSSSSSK.',
-  '.KSSSSSSSSSSSSSSSSSK',
-  '.KSSSSSSSSSSSSSSSSSK',
-  'WWWWWWWWWWWWWWWWWWWW',
-  'WWWWWWWWWWWWWWWWWWWW',
-  'WWWWWWWWWWWWWWWWWWWW'
-]);
-
-const landmark_opera = landmarkMap('悉尼歌剧院', [
-  '.........WWWWW......',
-  '........WW...WW.....',
-  '.......WW.....WW....',
-  '......WW.......WW...',
-  '.....WW.........WW..',
-  '....WW...........WW.',
-  '...WW.............WW',
-  '..WW...............W',
-  '.WW.................',
-  'WW..................',
-  'WW.......WWWWW......',
-  '.WW.....WW...WW.....',
-  '..WW...WW.....WW....',
-  '...WW.WW.......WW...',
-  '....WWW.........WW..',
-  '.....W...........WW.',
-  '..................WW',
-  'EEEEEEEEEEEEEEEEEEEE',
-  'EEEEEEEEEEEEEEEEEEEE',
-  'EEEEEEEEEEEEEEEEEEEE'
-]);
-
-const landmark_bigben = landmarkMap('大本钟', [
-  '.........KKK........',
-  '..........K.........',
-  '.........KKK........',
-  '..........K.........',
-  '.........KKK........',
-  '.........KKK........',
-  '.........KKK........',
-  '.......RRRRRRR......',
-  '.......RWWWWWR......',
-  '.......RWBWBWR......',
-  '.......RWBWBWR......',
-  '.......RWWWWWR......',
-  '.......RRRRRRR......',
-  '.........RR.........',
-  '.........RR.........',
-  '.........RR.........',
-  '.......RRRRRRR......',
-  '.......RRRRRRR......',
-  'WWWWWWWWWWWWWWWWWWWW',
-  'WWWWWWWWWWWWWWWWWWWW'
-]);
-
-const landmark_sophia = landmarkMap('圣索菲亚教堂', [
-  '..........K.........',
-  '..........K.........',
-  '.........YYY........',
-  '........YYYYY.......',
-  '.......YYYYYYY......',
-  '.......YYYYYYY......',
-  '........YYYYY.......',
-  '.........YYY........',
-  '.........KKK........',
-  '........WWWWW.......',
-  '.......WWWWWWW......',
-  '......WWWWWWWWW.....',
-  '.....WWWWWWWWWWW....',
-  '....WWWWWWWWWWWWW...',
-  '...WWWWWWWWWWWWWWW..',
-  '...WWWWWWWWWWWWWWW..',
-  '...W..WWWWWWWWW..W..',
-  '......WWWWWWWWW.....',
-  'NNNNNNNNNNNNNNNNNNNN',
-  'NNNNNNNNNNNNNNNNNNNN'
-]);
-
-const landmark_qingdao = landmarkMap('五月的风', [
-  '....................',
-  '.........B..........',
-  '........BBB.........',
-  '.......BBBBB........',
-  '......BBBBBBB.......',
-  '.....BBBBBBBBB......',
-  '....BBBBBBBBBBB.....',
-  '...BBBBBBBBBBBBB....',
-  '..BBBBBBBBBBBBBBB...',
-  '.BBBBBBBBBBBBBBBBB..',
-  'BBBBBBBBBBBBBBBBBBB.',
-  '.BBBBBBBBBBBBBBBBB..',
-  '..BBBBBBBBBBBBBBB...',
-  '...BBBBBBBBBBBBB....',
-  '....BBBBBBBBBBB.....',
-  '.....BBBBBBBBB......',
-  '......BBBBBBB.......',
-  '.......BBBBB........',
-  'EEEEEEEEEEEEEEEEEEEE',
-  'EEEEEEEEEEEEEEEEEEEE'
-]);
-
-const landmark_santorini = landmarkMap('大理蓝白', [
-  '.........WWW........',
-  '........WWWWW.......',
-  '.......WW...WW......',
-  '......WW.....WW.....',
-  '.....WW.......WW....',
-  '....WW.........WW...',
-  '...WWWWWWWWWWWWWWW..',
-  '..WWWWWWWWWWWWWWWWW.',
-  '.WWWWWWWWWWWWWWWWWWW',
-  '.WWWWWWWWWWWWWWWWWWW',
-  '.WW..WWWWWWWWWWW..WW',
-  '.WW..WWWWWWWWWWW..WW',
-  '.WW..WWWWWWWWWWW..WW',
-  '.WW..WWWWWWWWWWW..WW',
-  '.WW..WWWWWWWWWWW..WW',
-  '.WW..WWWWWWWWWWW..WW',
-  'EEEEEEEEEEEEEEEEEEEE',
-  'EEEEEEEEEEEEEEEEEEEE',
-  'EEEEEEEEEEEEEEEEEEEE',
-  'EEEEEEEEEEEEEEEEEEEE'
-]);
-
-/* ---- 程序化地标 ---- */
-const landmark_pyramid = makeGrid(20,20,(x,y,c,r)=>{
-  if(y>=17) return C('暖石'); // 沙地
-  const cx=c/2, h=16;
-  const slope = Math.abs(x-cx) * (h/(c/2));
-  if(y >= 16-slope) return C('黄');
-  return C('天蓝');
-});
-
-const landmark_tokyo = makeGrid(20,20,(x,y,c,r)=>{
-  const cx=c/2;
-  if(y>=17) return C('白'); // 地面
-  if(Math.abs(x-cx)<=1 && y>=2) return C('白');
-  const towerW = 2 + Math.floor((17-y)/2.2);
-  if(y>=2 && Math.abs(x-cx)<=towerW){
-    if((x+y)%3===0) return C('砖红');
-    return C('白');
-  }
-  if(y<4 && Math.abs(x-cx)<=4) return C('天蓝');
-  return C('天蓝');
-});
-
-const landmark_tiantan = makeGrid(20,20,(x,y,c,r)=>{
-  const cx=c/2;
-  if(y>=17) return C('暖石');
-  const roof = y=>{
-    if(y>=4 && y<=6 && Math.abs(x-cx)<=(y-1)) return C('青');
-    if(y>=7 && y<=9 && Math.abs(x-cx)<=(10-y)) return C('青');
-    if(y>=10 && y<=12 && Math.abs(x-cx)<=(y-6)) return C('青');
-    if(y>=13 && y<=15 && Math.abs(x-cx)<=(15-y)) return C('青');
     return null;
-  };
-  const col = roof(y);
-  if(col) return col;
-  if(y>=13 && y<=16 && Math.abs(x-cx)<=1) return C('砖红');
-  if(y>=11 && y<=12 && Math.abs(x-cx)<=3) return C('石灰白');
-  return C('天蓝');
-});
-
-const landmark_liberty = makeGrid(20,20,(x,y,c,r)=>{
-  const cx=c/2;
-  if(y>=17) return C('暖石');
-  // 火炬
-  if(y>=1 && y<=3 && x===10) return C('黄');
-  if(y===0 && x>=8 && x<=12) return C('黄');
-  // 头
-  if(y>=4 && y<=6 && Math.abs(x-cx)<=2) return C('绿');
-  // 身体
-  if(y>=7 && y<=13 && Math.abs(x-cx)<=1) return C('绿');
-  // 裙摆
-  if(y>=14 && y<=16 && Math.abs(x-cx)<=(y-11)) return C('绿');
-  return C('天蓝');
-});
-
-const landmark_guilin = makeGrid(20,20,(x,y,c,r)=>{
-  // 山
-  const peaks=[{x:3,h:12},{x:7,h:8},{x:12,h:14},{x:16,h:10}];
-  for(const pk of peaks){
-    if(Math.abs(x-pk.x)<=(20-y)*(pk.h/20) && y>=20-pk.h) return C('绿');
   }
-  // 水
-  if(y>=16) return C('青');
-  // 天空
-  return C('天蓝');
+  let a=roof(2,8,1,4,C('蓝'),C('海军')); if(a) return a;
+  let b=roof(9,15,3,7,C('蓝'),C('海军')); if(b) return b;
+  let r3=roof(16,21,6,10,C('蓝'),C('海军')); if(r3) return r3;
+  if(y>=22&&y<=25&&dx<=11){ if(dx>=10.5) return C('浅棕'); return C('白'); }
+  if(y===0&&dx<=0.6) return C('金');
+  if(y===1&&dx<=1.2) return C('金');
+  return null;
 });
 
-const landmark_potala = makeGrid(20,20,(x,y,c,r)=>{
-  const cx=c/2;
-  if(y>=17) return C('暖石');
-  // 白宫基座
-  if(y>=10 && Math.abs(x-cx)<=7) return C('石灰白');
-  // 红宫
-  if(y>=3 && y<=9 && Math.abs(x-cx)<=4) return C('砖红');
-  // 金顶
-  if(y>=1 && y<=2 && Math.abs(x-cx)<=3) return C('金');
-  if(y===0 && Math.abs(x-cx)<=1) return C('金');
-  return C('天蓝');
+/* ---- 自由女神（纽约）---- */
+const landmark_liberty = makeGrid(18,34,(x,y,c,r)=>{
+  const cx=(c-1)/2, dx=Math.abs(x-cx);
+  if(y>=28&&y<=33&&dx<=4) return C('浅棕');
+  if(y>=14&&y<=27){
+    const hw=1.2+(y-14)*0.18;
+    if(dx<=hw){ if(dx>=hw-0.4) return C('橄榄'); return C('绿'); }
+  }
+  if(y>=8&&y<=13&&dx<=1.6) return C('绿');
+  if(y>=5&&y<=7&&dx<=1.1) return C('绿');
+  if(y===4){ const rays=[-2.2,-1.5,-0.8,0,0.8,1.5,2.2]; if(rays.some(rr=>Math.abs(dx-Math.abs(rr))<0.45)) return C('绿'); }
+  if(y===3){ const rays=[-1.5,0,1.5]; if(rays.some(rr=>Math.abs(dx-Math.abs(rr))<0.45)) return C('绿'); }
+  if(y>=4&&y<=9&&x>=cx+1.6&&x<=cx+4){ if(y<=5) return C('黄'); return C('绿'); }
+  if(y>=1&&y<=3&&x>=cx+2&&x<=cx+3.6) return C('黄');
+  return null;
+});
+
+/* ---- 金字塔（吉萨）---- */
+const landmark_pyramid = makeGrid(32,20,(x,y,c,r)=>{
+  if(y>=17) return C('浅棕');
+  const sx=26, sy=4; const ds=Math.sqrt((x-sx)**2+(y-sy)**2);
+  if(ds<=2.2) return C('黄');
+  function pyr(cxx,baseY,halfW,topY,col){
+    if(y<=topY||y>baseY) return null;
+    const t=(y-topY)/(baseY-topY);
+    const hw=halfW*t;
+    if(Math.abs(x-cxx)<=hw) return col;
+    return null;
+  }
+  let a=pyr(11,16,9,3,C('黄')); if(a) return a;
+  let b=pyr(24,15,5,6,C('浅棕')); if(b) return b;
+  return null;
+});
+
+/* ---- 悉尼歌剧院（悉尼）---- */
+const landmark_opera = makeGrid(32,20,(x,y,c,r)=>{
+  if(y>=15) return C('青');
+  if(y>=13&&y<15) return C('浅棕');
+  function sail(x0,x1,apexY){
+    if(x>=x0&&x<=x1){
+      const t=(x-x0)/(x1-x0);
+      const topY=apexY+Math.sin(t*Math.PI)*6;
+      if(y>=topY&&y<13) return C('白');
+    }
+    return null;
+  }
+  let s;
+  s=sail(2,12,3); if(s) return s;
+  s=sail(10,20,5); if(s) return s;
+  s=sail(18,28,4); if(s) return s;
+  s=sail(24,31,6); if(s) return s;
+  return null;
+});
+
+/* ---- 布达拉宫（拉萨）---- */
+const landmark_potala = makeGrid(30,26,(x,y,c,r)=>{
+  const cx=(c-1)/2, dx=Math.abs(x-cx);
+  if(y>=22) return C('浅棕');
+  if(y>=12&&y<20&&dx<=12){ if((x%4===0)&&(y%3===0)) return C('灰'); return C('白'); }
+  if(y>=6&&y<12&&dx<=8){ if((x%3===0)&&(y%2===0)) return C('金'); return C('砖红'); }
+  if(y>=3&&y<6&&dx<=6) return C('金');
+  if(y>=1&&y<3&&dx<=3) return C('砖红');
+  return null;
+});
+
+/* ---- 桂林山水（桂林）---- */
+const landmark_guilin = makeGrid(32,20,(x,y,c,r)=>{
+  if(y>=14) return C('青');
+  const peaks=[{x:5,h:11},{x:11,h:8},{x:18,h:13},{x:24,h:9},{x:28,h:7}];
+  for(const pk of peaks){
+    const hw=(20-y)*(pk.h/20);
+    if(Math.abs(x-pk.x)<=hw&&y>=20-pk.h) return C('绿');
+  }
+  if(y>=15&&y<=16&&x>=13&&x<=17) return C('白');
+  return null;
+});
+
+/* ---- 五月的风（青岛）---- */
+const landmark_wind = makeGrid(24,24,(x,y,c,r)=>{
+  const cx=(c-1)/2, cy=(r-1)/2;
+  const dx=x-cx, dy=y-cy;
+  const rad=Math.sqrt(dx*dx+dy*dy);
+  const ang=Math.atan2(dy,dx);
+  if(rad>11) return null;
+  const band=Math.floor((ang/(Math.PI/3))+rad*0.7);
+  if(band%2===0) return C('砖红');
+  return C('浅粉');
+});
+
+/* ---- 圣索菲亚教堂（伊斯坦布尔）---- */
+const landmark_sophia = makeGrid(28,26,(x,y,c,r)=>{
+  const cx=(c-1)/2, dx=Math.abs(x-cx);
+  if((Math.abs(x-2.5)<=1||Math.abs(x-25.5)<=1)&&y>=6&&y<=22) return C('白');
+  if((Math.abs(x-2.5)<=1||Math.abs(x-25.5)<=1)&&y<6) return C('黑');
+  if(y>=14&&y<=22&&dx<=9) return C('白');
+  const dr=Math.sqrt((x-cx)**2+(y-13)**2);
+  if(dr<=8&&y<=13){ if(dr>=7) return C('黑'); return C('白'); }
+  if(y>=14&&y<=15&&dx<=9) return C('砖红');
+  return null;
+});
+
+/* ---- 大理蓝白（圣托里尼风）---- */
+const landmark_santorini = makeGrid(28,22,(x,y,c,r)=>{
+  if(y>=18) return C('浅棕');
+  function house(x0,x1,y0,y1){ if(x>=x0&&x<=x1&&y>=y0&&y<=y1) return C('白'); return null; }
+  let h;
+  h=house(2,10,12,18); if(h) return h;
+  h=house(11,18,9,18); if(h) return h;
+  h=house(19,26,13,18); if(h) return h;
+  const dcx=14.5, dcy=9, dr=Math.sqrt((x-dcx)**2+(y-dcy)**2);
+  if(dr<=3&&y<=9) return C('蓝');
+  if((x===5||x===6)&&(y===15||y===16)) return C('蓝');
+  if((x===22||x===23)&&(y===15||y===16)) return C('蓝');
+  return null;
 });
 
 const LANDMARK_PATTERNS = [
-  landmark_eiffel,
-  landmark_opera,
-  landmark_bigben,
-  landmark_sophia,
-  landmark_qingdao,
-  landmark_santorini,
-  { name:'金字塔', cols:20, rows:20, data:landmark_pyramid },
-  { name:'东京塔', cols:20, rows:20, data:landmark_tokyo },
-  { name:'天坛',   cols:20, rows:20, data:landmark_tiantan },
-  { name:'自由女神', cols:20, rows:20, data:landmark_liberty },
-  { name:'桂林山水', cols:20, rows:20, data:landmark_guilin },
-  { name:'布达拉宫', cols:20, rows:20, data:landmark_potala }
+  { name:'埃菲尔铁塔', cols:20, rows:34, data:landmark_eiffel, landmark:true },
+  { name:'东京塔',     cols:18, rows:32, data:landmark_tokyo,  landmark:true },
+  { name:'大本钟',     cols:16, rows:34, data:landmark_bigben, landmark:true },
+  { name:'天坛',       cols:26, rows:26, data:landmark_tiantan,landmark:true },
+  { name:'自由女神',   cols:18, rows:34, data:landmark_liberty,landmark:true },
+  { name:'金字塔',     cols:32, rows:20, data:landmark_pyramid,landmark:true },
+  { name:'悉尼歌剧院', cols:32, rows:20, data:landmark_opera,  landmark:true },
+  { name:'布达拉宫',   cols:30, rows:26, data:landmark_potala, landmark:true },
+  { name:'桂林山水',   cols:32, rows:20, data:landmark_guilin, landmark:true },
+  { name:'五月的风',   cols:24, rows:24, data:landmark_wind,   landmark:true },
+  { name:'圣索菲亚教堂', cols:28, rows:26, data:landmark_sophia, landmark:true },
+  { name:'大理蓝白',   cols:28, rows:22, data:landmark_santorini, landmark:true }
 ];
 
 window.MODULES = {
