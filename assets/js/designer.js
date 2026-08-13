@@ -207,6 +207,77 @@
         c.fillStyle=shade(col,0.25);
         [[w/2,FRAME*0.55],[FRAME*0.55,h/2],[w-FRAME*0.55,h/2]].forEach((p,i)=>petal(p[0],p[1],FRAME*(0.22-i*0.02), Math.PI/4+i));
       }
+    },
+    /* —— 新增：复古掌机 / 像素化 多样化边框 —— */
+    psp:{ name:'PSP', emoji:'🕹️', defaultColor:'#1c1c1c',
+      draw(c,bx,by,bw,bh,col){
+        const w=canvas.width, h=canvas.height, dk=shade(col,-0.42), lt=shade(col,0.42);
+        c.fillStyle=col; c.fillRect(0,0,w,h);
+        c.fillStyle=lt; c.fillRect(FRAME*0.22, FRAME*0.16, w-FRAME*0.44, FRAME*0.12);            // 顶部高光
+        c.fillStyle=dk; c.fillRect(FRAME*0.22, FRAME*0.06, bw*0.16, FRAME*0.1);                  // 左肩键
+        c.fillStyle=dk; c.fillRect(w-FRAME*0.22-bw*0.16, FRAME*0.06, bw*0.16, FRAME*0.1);        // 右肩键
+        const lx=bx+FRAME*0.52, ly=FRAME*0.52;                                                   // 左：摇杆
+        c.fillStyle=dk; c.beginPath(); c.arc(lx,ly,FRAME*0.26,0,Math.PI*2); c.fill();
+        c.fillStyle=shade(col,0.12); c.beginPath(); c.arc(lx,ly,FRAME*0.15,0,Math.PI*2); c.fill();
+        const rx=w-bx-FRAME*0.52, ry=FRAME*0.52, r=FRAME*0.12;                                   // 右：△○×□ 四键
+        [[0,-1,'#E3000B'],[1,0,'#FFD500'],[0,1,'#006CB7'],[-1,0,'#ffffff']].forEach(k=>{ c.fillStyle=k[2]; c.beginPath(); c.arc(rx+k[0]*FRAME*0.36, ry+k[1]*FRAME*0.36, r,0,Math.PI*2); c.fill(); });
+        c.fillStyle=lt; c.beginPath(); c.arc(w/2, h-FRAME*0.52, FRAME*0.15,0,Math.PI*2); c.fill(); // 底部 home 键
+        c.fillStyle=col; c.beginPath(); c.arc(w/2, h-FRAME*0.52, FRAME*0.08,0,Math.PI*2); c.fill();
+      }
+    },
+    pixelcam:{ name:'像素相机', emoji:'📷', defaultColor:'#006CB7',
+      draw(c,bx,by,bw,bh,col){
+        const w=canvas.width, h=canvas.height, dk=shade(col,-0.4), lt=shade(col,0.4), px=Math.max(3,Math.round(FRAME*0.16));
+        c.fillStyle=col; c.fillRect(0,0,w,h);
+        c.fillStyle=dk; for(let y=FRAME*0.5; y<h-FRAME*0.5; y+=px*2) c.fillRect(FRAME*0.5, y, w-FRAME, 1); // 像素扫描线
+        c.fillStyle=lt; c.fillRect(bx+bw*0.36, FRAME*0.22, bw*0.28, FRAME*0.32);                   // 顶部取景器（像素块）
+        const cx=w/2, cy=h-FRAME*0.55, R=FRAME*0.42;                                             // 镜头：方块同心环（8-bit）
+        [['#111111',R],['#444444',R*0.78],['#777777',R*0.56],['#aaaaaa',R*0.36],[lt,R*0.18]].forEach(([cc,rr])=>{ c.fillStyle=cc; c.fillRect(cx-rr, cy-rr, rr*2, rr*2); });
+        c.fillStyle='rgba(255,255,255,.35)'; c.fillRect(cx-R*0.5, cy-R*0.5, px, px);             // 像素高光
+        c.fillStyle='#E3000B'; c.fillRect(bx+bw*0.1, FRAME*0.32, px*1.6, px*1.6);                 // REC 像素点
+      }
+    },
+    gameboy:{ name:'Game Boy', emoji:'🟢', defaultColor:'#8bac0f',
+      draw(c,bx,by,bw,bh,col){
+        const w=canvas.width, h=canvas.height, dk=shade(col,-0.5), lt=shade(col,0.55), screen='#0f380f', px=Math.max(2,Math.round(FRAME*0.1));
+        c.fillStyle=col; c.fillRect(0,0,w,h);
+        const sw=bw*0.6, sh=FRAME*0.46;                                                         // 屏幕区
+        c.fillStyle=screen; c.fillRect(w/2-sw/2, FRAME*0.16, sw, sh);
+        c.fillStyle=shade(screen,0.3); c.fillRect(w/2-sw/2+3, FRAME*0.16+3, sw-6, sh-6);
+        const dx=bx+FRAME*0.52, dy=FRAME*0.56, u=FRAME*0.14;                                    // 十字键
+        c.fillStyle=dk; c.fillRect(dx-u/2, dy-u*1.6, u, u*3.2); c.fillRect(dx-u*1.6, dy-u/2, u*3.2, u);
+        const ax=w-bx-FRAME*0.52, ay=FRAME*0.56;                                               // A/B 圆键
+        c.fillStyle=dk; c.beginPath(); c.arc(ax, ay+u*0.6, u*0.55,0,Math.PI*2); c.fill();
+        c.beginPath(); c.arc(ax-u*1.05, ay-u*0.3, u*0.55,0,Math.PI*2); c.fill();
+        c.fillStyle=dk; for(let i=0;i<4;i++) for(let j=0;j<4;j++) c.fillRect(bx+FRAME*0.3+i*px*1.4, h-FRAME*0.62+j*px*1.4, px, px); // 喇叭斜点
+      }
+    },
+    vhs:{ name:'VHS 录像', emoji:'📼', defaultColor:'#3a2b5a',
+      draw(c,bx,by,bw,bh,col){
+        const w=canvas.width, h=canvas.height, dk=shade(col,-0.42), lt=shade(col,0.45);
+        c.fillStyle=col; c.fillRect(0,0,w,h);
+        c.fillStyle=lt; c.fillRect(FRAME*0.2, FRAME*0.18, w-FRAME*0.4, FRAME*0.22);             // 标签条
+        c.fillStyle='#E3000B'; c.fillRect(FRAME*0.2, FRAME*0.18, w-FRAME*0.4, FRAME*0.07);
+        const ry=h-FRAME*0.55, r=FRAME*0.24;                                                   // 两个卷轴
+        [bx+bw*0.33, w-bx-bw*0.33].forEach(cx=>{
+          c.fillStyle=dk; c.beginPath(); c.arc(cx,ry,r,0,Math.PI*2); c.fill();
+          c.fillStyle=lt; c.beginPath(); c.arc(cx,ry,r*0.4,0,Math.PI*2); c.fill();
+        });
+        c.fillStyle='#ffffff'; c.fillRect(bx+bw*0.08, FRAME*0.52, FRAME*0.1, FRAME*0.18); c.fillRect(bx+bw*0.08+FRAME*0.16, FRAME*0.52, FRAME*0.1, FRAME*0.18); // PLAY
+        c.fillStyle='rgba(0,0,0,.12)'; for(let y=FRAME*0.5; y<h-FRAME*0.4; y+=4) c.fillRect(FRAME*0.5, y, w-FRAME, 1); // 扫描线
+      }
+    },
+    mosaic:{ name:'像素波点', emoji:'🔳', defaultColor:'#7b3ff2',
+      draw(c,bx,by,bw,bh,col){
+        const w=canvas.width, h=canvas.height, dk=shade(col,-0.32), px=Math.max(3,Math.round(FRAME*0.18));
+        c.fillStyle=col; c.fillRect(0,0,w,h);
+        c.fillStyle=dk;
+        for(let y=FRAME*0.5; y<h-FRAME*0.5; y+=px) for(let x=FRAME*0.5; x<w-FRAME*0.5; x+=px){
+          if(((x/px|0)+(y/px|0))%2===0) c.fillRect(x, y, px-1, px-1);                          // 8-bit 棋盘波点
+        }
+        c.fillStyle='#ffffff';
+        [[FRAME*0.5,FRAME*0.5],[w-FRAME*0.5,FRAME*0.5],[FRAME*0.5,h-FRAME*0.5],[w-FRAME*0.5,h-FRAME*0.5]].forEach(p=>c.fillRect(p[0]-px/2, p[1]-px/2, px, px)); // 四角像素点
+      }
     }
   };
   function getTheme(){ return FRAME_THEMES[frameTheme] || FRAME_THEMES.lego; }
@@ -873,15 +944,14 @@
   const FRAME_COLORS=[{name:'红',hex:'#E3000B'},{name:'粉',hex:'#ff9ec8'},{name:'黄',hex:'#FFD500'},{name:'蓝',hex:'#006CB7'},{name:'黑',hex:'#1c1c1c'},{name:'白',hex:'#f4f4f4'}];
   function frameThumbSVG(theme,color){
     const size=44, f=10;
-    const bg=theme.defaultColor==='#f4f4f4'?'#e8e8e8':theme.defaultColor;
     // 用 offscreen canvas 生成 data URI 缩略图
     const oc=document.createElement('canvas'); oc.width=size; oc.height=size;
     const ox=oc.getContext('2d');
-    // 临时让主题 draw 渲染到缩略图（模拟完整 canvas 尺寸）
-    const savedW=canvas.width, savedH=canvas.height;
-    canvas.width=size; canvas.height=size;
+    // 临时把画布与边框带宽缩到缩略图尺寸，让边框装饰真实可见（否则 FRAME=34 会把装饰挤到画布外）
+    const savedW=canvas.width, savedH=canvas.height, savedF=FRAME;
+    canvas.width=size; canvas.height=size; FRAME=f;
     theme.draw(ox, f, f, size-f*2, size-f*2, color);
-    canvas.width=savedW; canvas.height=savedH;
+    canvas.width=savedW; canvas.height=savedH; FRAME=savedF;
     return oc.toDataURL('image/png');
   }
   function buildFrameUI(){
