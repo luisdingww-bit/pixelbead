@@ -426,9 +426,9 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
     radial-gradient(circle at 20% 30%, rgba(255,92,168,.22), transparent 35%),
     radial-gradient(circle at 80% 70%, rgba(126,200,255,.28), transparent 40%),
     linear-gradient(180deg, #ffe8f0 0%, #e8f5ff 100%);
-  padding:clamp(3rem,7vw,5rem) 0;
+  padding:clamp(2rem,4vw,3.2rem) 0;
 }
-.landmarks-head{ text-align:center; margin-bottom:2.4rem; }
+.landmarks-head{ text-align:center; margin-bottom:1.3rem; }
 .landmarks-head .kicker{ font-family:var(--font-pixel); font-size:.7rem; color:var(--brick-pink); letter-spacing:1px; }
 .landmarks-head h2{
   font-family:var(--font-disp); font-weight:800;
@@ -446,62 +446,65 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
 .landmark-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:1.4rem;
+  gap:1rem;
 }
 .landmark-card{
   display:block;
   background:linear-gradient(180deg, #bfe3ff 0%, #eaf6ff 100%);
-  border-radius:18px;
+  border-radius:14px;
   border:3px solid rgba(0,0,0,.08);
   overflow:hidden;
-  box-shadow:0 6px 0 var(--shadow-hard), 0 12px 22px var(--shadow);
+  box-shadow:0 5px 0 var(--shadow-hard), 0 10px 18px var(--shadow);
   transition:transform .15s ease, box-shadow .15s ease;
   text-decoration:none;
   color:inherit;
 }
 .landmark-card:hover{
-  transform:translateY(-7px) rotate(-.6deg);
-  box-shadow:0 9px 0 var(--shadow-hard), 0 18px 30px var(--shadow);
+  transform:translateY(-6px) rotate(-.6deg);
+  box-shadow:0 8px 0 var(--shadow-hard), 0 15px 26px var(--shadow);
 }
 .landmark-card canvas{
   display:block;
-  width:100%;
+  width:auto;
+  max-width:88%;
   height:auto;
+  max-height:170px;
+  margin:10px auto 0;
   image-rendering:pixelated;
   background:transparent;
 }
 .landmark-card .city{
   text-align:center;
-  padding:.9rem .6rem 1rem;
+  padding:.65rem .5rem .8rem;
   background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(232,245,255,.95));
 }
 .landmark-card .city b{
-  font-family:var(--font-disp); font-weight:800; font-size:1.15rem; color:var(--ink); display:block;
+  font-family:var(--font-disp); font-weight:800; font-size:1.05rem; color:var(--ink); display:block;
 }
 .landmark-card .city small{
-  font-size:.72rem; color:#7a6f80; font-weight:600; margin-top:.15rem; display:block;
+  font-size:.7rem; color:#7a6f80; font-weight:600; margin-top:.12rem; display:block;
 }
 
 @media(max-width:960px){
   .landmark-grid{ grid-template-columns:repeat(3,1fr); }
 }
 @media(max-width:560px){
-  .landmark-grid{ grid-template-columns:repeat(2,1fr); gap:1rem; }
-  .landmark-card .city b{ font-size:1rem; }
+  .landmark-grid{ grid-template-columns:repeat(2,1fr); gap:.8rem; }
+  .landmark-card .city b{ font-size:.95rem; }
 }
 
 /* 世界地标系列标题下方的像素参考缩略图 */
-.landmark-pixels{ margin:0 0 2.2rem; }
+.landmark-pixels{ margin:0 0 1.3rem; }
 .pixel-thumb-grid{
   display:grid;
   grid-template-columns:repeat(8, 1fr);
-  gap:12px;
+  gap:10px;
 }
-.px-thumb{ margin:0; background:#fff; border:2px solid rgba(0,0,0,.08); border-radius:12px; overflow:hidden; box-shadow:0 4px 0 var(--shadow-hard), 0 9px 16px var(--shadow); transition:transform .15s ease, box-shadow .15s ease; }
-.px-thumb:hover{ transform:translateY(-5px); box-shadow:0 7px 0 var(--shadow-hard), 0 14px 24px var(--shadow); }
+.px-thumb{ margin:0; background:#fff; border:2px solid rgba(0,0,0,.08); border-radius:10px; overflow:hidden; box-shadow:0 3px 0 var(--shadow-hard), 0 7px 13px var(--shadow); transition:transform .15s ease, box-shadow .15s ease; }
+.px-thumb:hover{ transform:translateY(-4px); box-shadow:0 6px 0 var(--shadow-hard), 0 12px 20px var(--shadow); }
 .px-thumb a{ display:block; text-decoration:none; color:inherit; }
 .px-thumb img{ width:100%; aspect-ratio:1; object-fit:cover; image-rendering:pixelated; display:block; background:#0b1020; }
-.px-thumb figcaption{ padding:7px 8px; text-align:center; font-family:var(--font-disp); font-weight:800; font-size:.82rem; color:var(--ink); }
+.px-thumb figcaption{ padding:5px 6px; text-align:center; font-family:var(--font-disp); font-weight:800; font-size:.76rem; color:var(--ink); }
 @media(max-width:900px){
   .pixel-thumb-grid{ grid-template-columns:repeat(4, 1fr); }
 }
