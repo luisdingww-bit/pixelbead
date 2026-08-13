@@ -491,10 +491,7 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
 }
 
 /* 世界地标系列下方的像素参考缩略图 */
-.landmark-pixels{ margin-top:3.2rem; }
-.landmark-pixels-head{ text-align:center; margin-bottom:1.6rem; }
-.landmark-pixels-head h3{ font-family:var(--font-disp); font-weight:900; font-size:1.5rem; color:var(--ink); margin:0 0 .4rem; }
-.landmark-pixels-head p{ color:#5a5060; font-weight:500; margin:0; }
+.landmark-pixels{ margin-top:1.4rem; }
 .pixel-thumb-grid{
   display:grid;
   grid-template-columns:repeat(8, 1fr);
