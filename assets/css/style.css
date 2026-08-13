@@ -490,8 +490,8 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
   .landmark-card .city b{ font-size:1rem; }
 }
 
-/* 世界地标系列下方的像素参考缩略图 */
-.landmark-pixels{ margin-top:1.4rem; }
+/* 世界地标系列标题下方的像素参考缩略图 */
+.landmark-pixels{ margin:0 0 2.2rem; }
 .pixel-thumb-grid{
   display:grid;
   grid-template-columns:repeat(8, 1fr);
