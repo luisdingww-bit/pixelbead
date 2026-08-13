@@ -407,12 +407,18 @@
   }
 
   /* ---------- 工具切换 ---------- */
-  function setTool(t){ tool=t; toolEls.forEach(el=>el.classList.toggle('active', el.dataset.tool===t)); }
+  function setTool(t){ tool=t; toolEls.forEach(el=>el.classList.toggle('active', el.dataset.tool===t));
+    // 让尺寸下拉反映当前网格（图片自适应后可能是非方形）
+    if(sizeSel){ sizeSel.value = (COLS===ROWS) ? String(COLS) : 'custom'; }
+  }
   toolEls.forEach(el=>el.addEventListener('click',()=>setTool(el.dataset.tool)));
 
   /* ---------- 网格尺寸 ---------- */
-  sizeSel.addEventListener('change',()=>{ const v=parseInt(sizeSel.value); COLS=v; ROWS=v; snapshot();
-    setupCanvas(); grid=blankGrid(COLS,ROWS); render(); });
+  sizeSel.addEventListener('change',()=>{
+    if(sizeSel.value==='custom') return;   // 图片自适应后的非方形标记，不重置
+    const v=parseInt(sizeSel.value); COLS=v; ROWS=v; snapshot();
+    setupCanvas(); grid=blankGrid(COLS,ROWS); render();
+  });
 
   /* ---------- 照片转图案（颜色数 + 抖动） ---------- */
   function photoToGrid(img, nColors, dither){
@@ -460,21 +466,63 @@
     return reps.slice(0,Math.min(nColors, reps.length));
   }
   let pendingImg=null;
+  function updatePhotoDims(){
+    if(!pendingImg) return;
+    const w=parseInt(document.getElementById('phWidth').value);
+    const square=document.getElementById('phSquare').checked;
+    let cols, rows;
+    if(square){ cols=w; rows=w; }
+    else {
+      const ar=pendingImg.width/pendingImg.height;
+      cols=w; rows=Math.max(1, Math.round(w/ar));
+      // 限制极端比例下的边长，避免性能/清晰度过差
+      const cap=200; if(cols>cap){ cols=cap; rows=Math.max(1,Math.round(cols/ar)); }
+      if(rows>cap){ rows=cap; cols=Math.max(1,Math.round(rows*ar)); }
+    }
+    document.getElementById('phDims').textContent=`将生成 ${cols} × ${rows} 网格（约 ${cols*rows} 颗豆）`;
+  }
   fileInput.addEventListener('change',e=>{
     const f=e.target.files[0]; if(!f) return;
     const img=new Image(); const url=URL.createObjectURL(f);
-    img.onload=()=>{ pendingImg=img; document.getElementById('photoOpts').style.display='block';
-      toast('已选图片，调好颜色数后点「转换」'); };
+    img.onload=()=>{
+      pendingImg=img;
+      document.getElementById('photoOpts').style.display='block';
+      document.getElementById('phExport').disabled=true;
+      updatePhotoDims();
+      toast('已选图片，调好网格宽度 / 颜色数后点「转换生成图纸」');
+    };
     img.src=url;
   });
+  document.getElementById('phWidth').addEventListener('input',e=>{
+    document.getElementById('phWidthV').textContent=e.target.value; updatePhotoDims();
+  });
+  document.getElementById('phSquare').addEventListener('change',updatePhotoDims);
+  document.getElementById('phColors').addEventListener('input',e=>{ document.getElementById('phColorsV').textContent=e.target.value; });
   document.getElementById('phConvert').addEventListener('click',()=>{
     if(!pendingImg) return;
+    const w=parseInt(document.getElementById('phWidth').value);
     const n=parseInt(document.getElementById('phColors').value);
     const dith=document.getElementById('phDither').checked;
-    snapshot(); grid=photoToGrid(pendingImg, n, dith); render();
-    toast('照片已转成 '+COLS+'×'+ROWS+' 图案（'+n+' 色'+(dith?'+抖动':'')+'）');
+    const square=document.getElementById('phSquare').checked;
+    // 计算网格行列（适配图片比例）
+    let cols, rows;
+    if(square){ cols=w; rows=w; }
+    else {
+      const ar=pendingImg.width/pendingImg.height;
+      cols=w; rows=Math.max(1, Math.round(w/ar));
+      const cap=200; if(cols>cap){ cols=cap; rows=Math.max(1,Math.round(cols/ar)); }
+      if(rows>cap){ rows=cap; cols=Math.max(1,Math.round(rows*ar)); }
+    }
+    COLS=cols; ROWS=rows;
+    snapshot(); grid=photoToGrid(pendingImg, n, dith); setupCanvas(); render();
+    setTool('pen');
+    document.getElementById('phExport').disabled=false;
+    toast('已生成 '+COLS+'×'+ROWS+' 拼豆图纸（'+n+' 色'+(dith?'+抖动':'')+'）· 右侧可导出');
   });
-  document.getElementById('phColors').addEventListener('input',e=>{ document.getElementById('phColorsV').textContent=e.target.value; });
+  document.getElementById('phExport').addEventListener('click',()=>{
+    if(!pendingImg && statBeads.textContent==='0'){ toast('请先转换一张图片'); return; }
+    exportPDF();
+  });
 
   /* ---------- 文字 / 网址转图案 ---------- */
   function textToGrid(text){

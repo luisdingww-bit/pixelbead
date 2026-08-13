@@ -93,11 +93,21 @@
     </div>
     <p class="hint">按住鼠标拖动可连续画 · 支持触屏 · 数据全程在本地，不上传服务器</p>
     <div id="photoOpts" style="display:none; background:#fff7ec; border:2px solid rgba(0,0,0,.08); border-radius:12px; padding:.8rem; margin-top:.6rem; width:100%;">
+      <div style="font-weight:800; margin-bottom:.4rem">📷 图片生成拼豆图纸</div>
       <div style="display:flex; gap:.8rem; flex-wrap:wrap; align-items:center; font-size:.82rem; font-weight:700;">
+        <label>网格宽度(清晰度) <input type="range" id="phWidth" min="8" max="100" value="40" style="vertical-align:middle"> <b id="phWidthV">40</b></label>
         <label>颜色数 <input type="range" id="phColors" min="3" max="24" value="12" style="vertical-align:middle"> <b id="phColorsV">12</b></label>
         <label><input type="checkbox" id="phDither"> 抖动</label>
-        <button class="btn btn-red" id="phConvert" style="padding:.4em .8em">转换</button>
       </div>
+      <div style="display:flex; gap:.8rem; flex-wrap:wrap; align-items:center; font-size:.82rem; font-weight:700; margin-top:.4rem;">
+        <label><input type="checkbox" id="phSquare"> 强制正方形</label>
+        <span style="color:#8a6d3b" id="phDims">— 选好图片后显示尺寸 —</span>
+      </div>
+      <div style="display:flex; gap:.5rem; margin-top:.5rem;">
+        <button class="btn btn-red" id="phConvert" style="padding:.4em .9em; flex:1">转换生成图纸</button>
+        <button class="btn btn-yellow" id="phExport" style="padding:.4em .9em; flex:1" disabled>导出图纸(含清单)</button>
+      </div>
+      <p class="hint" style="margin:.5rem 0 0">网格越宽越清晰、豆子越多。转换后点「导出图纸」可一键生成含采购清单的 PDF 图纸。</p>
     </div>
   </main>
 
