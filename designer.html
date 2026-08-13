@@ -63,12 +63,18 @@
     </select>
     <div class="palette" id="palette"></div>
 
-    <h4 style="margin-top:1rem">📐 画板尺寸</h4>
-    <select class="mini-select" id="gridSize" style="width:100%;margin-bottom:.6rem">
-      <option value="15">15 × 15（钥匙扣）</option>
-      <option value="20">20 × 20（杯垫）</option>
-      <option value="29">29 × 29（标准拼豆板）</option>
-    </select>
+    <h4 style="margin-top:1rem">📐 板型预设</h4>
+    <div class="board-presets" id="boardPresets">
+      <button class="bp active" data-c="15" data-r="15">15×15</button>
+      <button class="bp" data-c="10" data-r="10">10×10<small>钥匙扣</small></button>
+      <button class="bp" data-c="20" data-r="20">20×20<small>杯垫</small></button>
+      <button class="bp" data-c="14" data-r="14">14×14<small>小方板</small></button>
+      <button class="bp" data-c="24" data-r="24">24×24</button>
+      <button class="bp" data-c="29" data-r="29">29×29<small>标准板</small></button>
+      <button class="bp" data-c="29" data-r="21">29×21<small>长方板</small></button>
+      <button class="bp" data-c="14" data-r="29">14×29<small>竖长板</small></button>
+    </div>
+    <p class="hint">点预设切换真实拼豆板尺寸，原图案左上角保留、其余留空。</p>
 
     <h4 style="margin-top:1rem">🖼 边框主题</h4>
     <button class="frame-toggle on" id="btnFrame">边框：开</button>
@@ -77,6 +83,10 @@
 
     <h4>✨ 预设图案</h4>
     <div class="preset-row" id="presets"></div>
+
+    <h4 style="margin-top:1rem">📚 社区模板</h4>
+    <div class="preset-row" id="community"></div>
+    <p class="hint">点击任意社区模板，直接载入画板继续编辑。更多在首页「社区模板库」。</p>
 
     <h4 style="margin-top:1rem">🔤 文字转图案</h4>
     <input class="mini-select" id="textInput" maxlength="12" placeholder="输入文字/网址" style="width:100%;margin-bottom:.5rem">
@@ -93,6 +103,18 @@
       <input type="file" id="photoInput" class="hidden-file" accept="image/*">
     </div>
     <p class="hint">按住鼠标拖动可连续画 · 支持触屏 · 数据全程在本地，不上传服务器</p>
+    <div class="canvas-actions">
+      <button id="rotL" title="逆时针旋转 90°">⟲ 左转</button>
+      <button id="rotR" title="顺时针旋转 90°">⟳ 右转</button>
+      <button id="flipH" title="水平翻转">⇄ 水平</button>
+      <button id="flipV" title="垂直翻转">⇅ 垂直</button>
+      <span class="zoom">
+        <button id="zoomOut" title="缩小">🔍－</button>
+        <span id="zoomLabel">100%</span>
+        <button id="zoomIn" title="放大">🔍＋</button>
+        <button id="zoomFit" title="适应屏幕">适应</button>
+      </span>
+    </div>
     <div id="photoOpts" style="display:none; background:#fff7ec; border:2px solid rgba(0,0,0,.08); border-radius:12px; padding:.8rem; margin-top:.6rem; width:100%;">
       <div style="font-weight:800; margin-bottom:.4rem">📷 图片生成拼豆图纸</div>
       <div style="display:flex; gap:.8rem; flex-wrap:wrap; align-items:center; font-size:.82rem; font-weight:700;">
@@ -139,6 +161,7 @@
 
 <script src="assets/js/bead-core.js"></script>
 <script src="assets/js/patterns.js"></script>
+<script src="assets/js/community.js"></script>
 <script src="assets/js/designer.js"></script>
 </body>
 </html>

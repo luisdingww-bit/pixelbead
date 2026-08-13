@@ -12,7 +12,7 @@
   const paletteEl= document.getElementById('palette');
   const presetEl = document.getElementById('presets');
   const toolEls  = document.querySelectorAll('.tool');
-  const sizeSel  = document.getElementById('gridSize');
+  // 画板尺寸改由「板型预设」按钮控制（见 HTML #boardPresets）
   const statBeads= document.getElementById('statBeads');
   const statColors=document.getElementById('statColors');
   const beadTable= document.getElementById('beadTable');
@@ -21,6 +21,7 @@
 
   /* ---------- 状态 ---------- */
   let COLS = 15, ROWS = 15, CELL = 30;
+  let ZOOM = 1;                 // 画板显示缩放（0.4–3）
   let grid = [];               // grid[y][x] = hex | null
   let current = window.PALETTE[2].hex; // 默认红色
   let tool = 'pen';
@@ -68,7 +69,7 @@
   function blankGrid(c,r){ const g=[]; for(let y=0;y<r;y++){ const row=[]; for(let x=0;x<c;x++) row.push(null); g.push(row);} return g; }
 
   function setupCanvas(){
-    CELL = Math.max(14, Math.floor(560/COLS));
+    CELL = Math.max(8, Math.floor(560/COLS*ZOOM));
     FRAME = frameOn ? FRAME_PX : 0;
     canvas.width = COLS*CELL + FRAME*2;
     canvas.height = ROWS*CELL + FRAME*2;
@@ -433,25 +434,64 @@
     });
   }
   function loadPattern(p){
-    COLS=p.cols; ROWS=p.rows; sizeSel.value = (COLS===ROWS? COLS : '15');
+    COLS=p.cols; ROWS=p.rows;
     setupCanvas(); grid=blankGrid(COLS,ROWS);
     for(let y=0;y<ROWS;y++) for(let x=0;x<COLS;x++) grid[y][x]=p.data[y][x];
     render();
   }
 
   /* ---------- 工具切换 ---------- */
-  function setTool(t){ tool=t; toolEls.forEach(el=>el.classList.toggle('active', el.dataset.tool===t));
-    // 让尺寸下拉反映当前网格（图片自适应后可能是非方形）
-    if(sizeSel){ sizeSel.value = (COLS===ROWS) ? String(COLS) : 'custom'; }
-  }
+  function setTool(t){ tool=t; toolEls.forEach(el=>el.classList.toggle('active', el.dataset.tool===t)); }
   toolEls.forEach(el=>el.addEventListener('click',()=>setTool(el.dataset.tool)));
 
-  /* ---------- 网格尺寸 ---------- */
-  sizeSel.addEventListener('change',()=>{
-    if(sizeSel.value==='custom') return;   // 图片自适应后的非方形标记，不重置
-    const v=parseInt(sizeSel.value); COLS=v; ROWS=v; snapshot();
-    setupCanvas(); grid=blankGrid(COLS,ROWS); render();
-  });
+  /* ---------- 画板变换 / 板型预设 / 社区模板 ---------- */
+  function resizeGrid(nc, nr){
+    const g = blankGrid(nc, nr);
+    for(let y=0;y<Math.min(ROWS,nr);y++)
+      for(let x=0;x<Math.min(COLS,nc);x++)
+        g[y][x] = grid[y][x];
+    COLS=nc; ROWS=nr; grid=g;
+  }
+  function resetSymmetry(){
+    symmetry='none';
+    document.querySelectorAll('#symRow .tool').forEach(x=>x.classList.toggle('active', x.dataset.sym==='none'));
+  }
+  function afterTransform(msg){ resetSymmetry(); setupCanvas(); render(); toast(msg); }
+  function rotateCW(){               // 顺时针 90°：每行反转后转置
+    for(let y=0;y<ROWS;y++) grid[y].reverse();
+    const ng=[]; for(let x=0;x<COLS;x++){ const row=[]; for(let y=0;y<ROWS;y++) row.push(grid[y][x]); ng.push(row); }
+    grid=ng; const t=COLS; COLS=ROWS; ROWS=t; afterTransform('顺时针旋转 90°');
+  }
+  function rotateCCW(){              // 逆时针 90°：转置后每行反转
+    const ng=[]; for(let x=0;x<COLS;x++){ const row=[]; for(let y=0;y<ROWS;y++) row.push(grid[y][x]); ng.push(row); }
+    for(let y=0;y<ng.length;y++) ng[y].reverse();
+    grid=ng; const t=COLS; COLS=ROWS; ROWS=t; afterTransform('逆时针旋转 90°');
+  }
+  function flipH(){ for(let y=0;y<ROWS;y++) for(let x=0;x<COLS/2;x++){ const t=grid[y][x]; grid[y][x]=grid[y][COLS-1-x]; grid[y][COLS-1-x]=t; } afterTransform('水平翻转'); }
+  function flipV(){ for(let y=0;y<ROWS/2;y++) for(let x=0;x<COLS;x++){ const t=grid[y][x]; grid[y][x]=grid[ROWS-1-y][x]; grid[ROWS-1-y][x]=t; } afterTransform('垂直翻转'); }
+  function zoomIn(){  ZOOM=Math.min(3, +(ZOOM+0.25).toFixed(2)); setupCanvas(); render(); updateZoomLabel(); }
+  function zoomOut(){ ZOOM=Math.max(0.4, +(ZOOM-0.25).toFixed(2)); setupCanvas(); render(); updateZoomLabel(); }
+  function zoomFit(){ ZOOM=1; setupCanvas(); render(); updateZoomLabel(); }
+  function updateZoomLabel(){ const el=document.getElementById('zoomLabel'); if(el) el.textContent=Math.round(ZOOM*100)+'%'; }
+
+  /* ---------- 社区模板：跨模块载入 ---------- */
+  function loadCommunityTemplate(t){
+    if(MODULE !== t.module) applyModule(t.module);
+    const mod = window.MODULES[t.module];
+    const found = mod.patterns.find(p => p.name === t.name);
+    if(found){ snapshot(); loadPattern(found); toast('已载入社区模板：'+t.name); }
+  }
+  function buildCommunity(){
+    const el=document.getElementById('community');
+    if(!el || !window.COMMUNITY) return;
+    el.innerHTML='';
+    window.COMMUNITY.forEach(t=>{
+      const chip=document.createElement('button'); chip.className='preset-chip';
+      chip.textContent=t.name; chip.title=(t.tag||'')+(t.author?(' · '+t.author):'');
+      chip.addEventListener('click',()=>loadCommunityTemplate(t));
+      el.appendChild(chip);
+    });
+  }
 
   /* ---------- 照片转图案（颜色数 + 抖动） ---------- */
   function photoToGrid(img, nColors, dither){
@@ -588,7 +628,7 @@
   document.getElementById('btnText').addEventListener('click',()=>{
     const t=document.getElementById('textInput').value.trim();
     if(!t){ toast('请先输入文字'); return; }
-    const r=textToGrid(t); COLS=r.cols; ROWS=r.rows; sizeSel.value='15';
+    const r=textToGrid(t); COLS=r.cols; ROWS=r.rows;
     setupCanvas(); grid=r.data; snapshot(); render(); toast('已生成文字图案：'+t);
   });
 
@@ -829,6 +869,23 @@
   iso.width=600; iso.height=440;
   applyModule(MODULE);                 // 按 URL ?m= 载入对应模块的调色板 / 预设 / 首个模板
   buildFrameUI();
+  buildCommunity();
+  updateZoomLabel();
+
+  /* 板型预设（标准拼豆板尺寸） */
+  document.querySelectorAll('#boardPresets .bp').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const nc=+b.dataset.c, nr=+b.dataset.r;
+      snapshot(); resizeGrid(nc,nr); setupCanvas(); render();
+      document.querySelectorAll('#boardPresets .bp').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      toast(`画板调整为 ${nc}×${nr}`);
+    });
+  });
+  /* 画布变换：旋转 / 翻转 / 缩放 */
+  const bindX=(id,fn)=>{ const e=document.getElementById(id); if(e) e.addEventListener('click',()=>{ snapshot(); fn(); }); };
+  bindX('rotL', rotateCCW); bindX('rotR', rotateCW); bindX('flipH', flipH); bindX('flipV', flipV);
+  bindX('zoomIn', zoomIn); bindX('zoomOut', zoomOut); bindX('zoomFit', zoomFit);
 
   /* ---------- 移动端：左栏工具抽屉折叠 ---------- */
   const leftToggle=document.getElementById('leftToggle');

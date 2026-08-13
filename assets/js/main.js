@@ -19,28 +19,23 @@
     setInterval(drawTeaser, 2600);
   }
 
-  /* 2. 社区作品墙 */
+  /* 2. 社区模板库（点击 deep-link 进入设计器载入编辑） */
   const grid = document.getElementById('gallery-grid');
-  if(grid && window.PATTERNS && window.drawBeads){
-    const items = [
-      { p:0, t:'爱心钥匙扣',   a:'@手工作业明天交' },
-      { p:2, t:'像素小花',     a:'@花花日记' },
-      { p:3, t:'今天也要开心', a:'@笑脸收集者' },
-      { p:4, t:'许愿小星星',   a:'@夜空便利店' },
-      { p:5, t:'蘑菇小屋',     a:'@蘑菇屋' },
-      { p:1, t:'薄荷宝石',     a:'@矿物标本' },
-      { p:0, t:'红心挂件',     a:'@豆豆研究所' },
-      { p:3, t:'笑脸徽章',     a:'@周末手作' }
-    ];
-    const cell = 10;
+  if(grid && window.COMMUNITY && window.drawBeads){
+    const items = window.COMMUNITY;
     items.forEach(it=>{
-      const p = window.PATTERNS[it.p];
-      const card = document.createElement('div'); card.className='art-card';
+      const p = { cols:it.cols, rows:it.rows, data:it.data };
+      const cell = Math.max(4, Math.floor(110 / Math.max(p.cols, p.rows))); // 统一缩略图尺寸
+      const card = document.createElement('a');
+      card.className = 'art-card reveal';
+      card.href = 'designer.html?m=' + it.module + '&p=' + encodeURIComponent(it.name);
+      card.target = '_blank'; card.rel = 'noopener';
+      card.title = '点击进入设计器编辑：' + it.name;
       const cv = document.createElement('canvas');
       cv.width = p.cols*cell; cv.height = p.rows*cell;
       window.drawBeads(cv.getContext('2d'), p.data, p.cols, p.rows, cell, true);
       const meta = document.createElement('div'); meta.className='meta';
-      meta.innerHTML = `<b>${it.t}</b><small>${it.a} · ${p.cols}×${p.rows}</small>`;
+      meta.innerHTML = `<b>${it.name}</b><small>${it.tag} · ${it.author} · ${p.cols}×${p.rows}</small>`;
       card.appendChild(cv); card.appendChild(meta);
       grid.appendChild(card);
     });
