@@ -768,6 +768,69 @@
     toast('用豆量清单已导出');
   }
 
+  /* ---------- 复制分享链接（把当前画板编码进 URL） ---------- */
+  const B64='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+  function b64urlEncode(str){ return btoa(unescape(encodeURIComponent(str))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+  function b64urlDecode(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); return decodeURIComponent(escape(atob(s))); }
+  function encodeDesign(){
+    const colors=[], idx={};
+    for(let y=0;y<ROWS;y++) for(let x=0;x<COLS;x++){ const c=grid[y][x]; if(c && !(c in idx)){ idx[c]=colors.length+1; colors.push(c); } }
+    if(colors.length>64) return null;            // 颜色过多暂不支持
+    let g='';
+    for(let y=0;y<ROWS;y++) for(let x=0;x<COLS;x++){ const c=grid[y][x]; g += c ? B64[idx[c]] : '.'; }
+    const meta={c:COLS,r:ROWS,br:activeBrand||'',p:colors};
+    return b64urlEncode(JSON.stringify(meta)+'|'+g);
+  }
+  function copyText(t){
+    const done=()=>toast('链接已复制，发给朋友即可同款画板 ✨');
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(done).catch(()=>fallbackCopy(t,done));
+    } else fallbackCopy(t,done);
+  }
+  function fallbackCopy(t,done){
+    const ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.top='-9999px';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try{ document.execCommand('copy'); if(done) done(); }catch(e){ toast('复制失败，请手动复制链接'); }
+    document.body.removeChild(ta);
+  }
+  function exportShare(){
+    let n=0; for(let y=0;y<ROWS;y++) for(let x=0;x<COLS;x++) if(grid[y][x]) n++;
+    if(n===0){ toast('画板还是空的，先画点东西吧～'); return; }
+    const code=encodeDesign();
+    if(!code){ toast('颜色超过 64 种，暂不支持分享链接'); return; }
+    if(code.length>32000){ toast('图案太大，暂不支持分享链接（请缩小画板）'); return; }
+    const q = MODULE!=='pixel' ? '?m='+MODULE : '';
+    copyText(location.origin + location.pathname + q + '#d=' + code);
+  }
+  function loadFromHash(){
+    if(!location.hash.startsWith('#d=')) return;
+    try{
+      const raw=b64urlDecode(location.hash.slice(3));
+      const sep=raw.indexOf('|'); if(sep<0) return;
+      const meta=JSON.parse(raw.slice(0,sep)), g=raw.slice(sep+1);
+      if(!meta.c||!meta.r||!Array.isArray(meta.p)) return;
+      COLS=meta.c|0; ROWS=meta.r|0; grid=blankGrid(COLS,ROWS);
+      let i=0;
+      for(let y=0;y<ROWS;y++) for(let x=0;x<COLS;x++){
+        const ch=g[i++]; grid[y][x] = (ch && ch!=='.') ? (meta.p[B64.indexOf(ch)-1]||null) : null;
+      }
+      if(meta.br){ activeBrand=meta.br; const sel=document.getElementById('brandSel'); if(sel) sel.value=meta.br; buildPalette(); }
+      setupCanvas(); render();
+      toast('已载入分享的设计 ✨');
+      history.replaceState(null,'', location.pathname + location.search); // 消费掉 hash，避免刷新重触发
+    }catch(e){ console.warn('分享链接解析失败', e); }
+  }
+
+  /* ---------- 新手引导（首次访问一次性提示） ---------- */
+  function setupOnboard(){
+    try{ if(localStorage.getItem('pb_onboard_v1')) return; }catch(e){}
+    const ov=document.getElementById('onboard'); if(!ov) return;
+    ov.classList.add('show');
+    const close=()=>{ ov.classList.remove('show'); try{ localStorage.setItem('pb_onboard_v1','1'); }catch(e){} };
+    ov.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',close));
+    ov.addEventListener('click',e=>{ if(e.target===ov) close(); });
+  }
+
   function downloadBlob(blob,name){ const a=document.createElement('a'); const url=URL.createObjectURL(blob);
     a.href=url; a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000); }
 
@@ -785,6 +848,7 @@
   document.getElementById('btnClear').addEventListener('click',()=>{ snapshot(); grid=blankGrid(COLS,ROWS); render(); toast('已清空'); });
   document.getElementById('btnPhoto').addEventListener('click',()=>fileInput.click());
   document.getElementById('btnPdf').addEventListener('click',exportPDF);
+  document.getElementById('btnShare').addEventListener('click',exportShare);
 
   /* ---------- 对称镜像 ---------- */
   document.querySelectorAll('#symRow .tool').forEach(b=>{
@@ -871,6 +935,8 @@
   buildFrameUI();
   buildCommunity();
   updateZoomLabel();
+  loadFromHash();      // 若通过「复制分享链接」打开，还原对方画板
+  setupOnboard();      // 首次访问弹出一次性新手引导
 
   /* 板型预设（标准拼豆板尺寸） */
   document.querySelectorAll('#boardPresets .bp').forEach(b=>{

@@ -328,6 +328,23 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
   padding:.8em 1.4em; border-radius:12px; font-weight:700; opacity:0; transition:.25s; z-index:99; pointer-events:none; }
 .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 
+/* ---------- 分享按钮（强调） ---------- */
+.export-btn.share{ background:var(--brick-red); color:#fff; font-weight:700; }
+.export-btn.share small{ opacity:.85; }
+
+/* ---------- 新手引导浮层 ---------- */
+.onboard{ position:fixed; inset:0; background:rgba(20,22,30,.55); backdrop-filter:blur(3px);
+  display:none; align-items:center; justify-content:center; z-index:200; padding:1rem; }
+.onboard.show{ display:flex; }
+.onboard-card{ background:#fff; border-radius:18px; max-width:420px; width:100%;
+  padding:1.6rem 1.6rem 1.4rem; box-shadow:0 20px 60px rgba(0,0,0,.3); animation:obpop .25s ease; }
+@keyframes obpop{ from{ transform:translateY(12px) scale(.97); opacity:0 } to{ transform:none; opacity:1 } }
+.ob-emoji{ font-size:2rem; text-align:center; }
+.onboard-card h3{ text-align:center; margin:.4rem 0 1rem; font-size:1.15rem; }
+.ob-steps{ margin:0; padding-left:1.2rem; line-height:1.95; font-size:.92rem; color:#333; }
+.ob-steps b{ color:var(--brick-red); }
+.ob-tip{ font-size:.8rem; color:#888; margin:.9rem 0 1.1rem; background:#f6f7fb; border-radius:10px; padding:.6rem .8rem; }
+
 /* ---------- 设计器移动端折叠开关 ---------- */
 .panel-toggle-m{ display:none; }
 
