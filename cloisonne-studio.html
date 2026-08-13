@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>掐丝珐琅工作室 · 真正可编辑 | 拼豆星球 PIXELBEAD</title>
+<meta name="description" content="拼豆星球掐丝珐琅工作室：自由掐丝描金线、点蓝填釉、贴鎏金珠，真正可以自己动手编辑的珐琅设计器，跟着七道工序一步步做，导出 PNG。">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/studio.css">
+</head>
+<body>
+
+<nav class="designer-nav">
+  <a class="brand" href="index.html"><span class="logo"></span>拼豆星球</a>
+  <div style="display:flex;gap:1rem;align-items:center;font-weight:700;">
+    <span id="moduleLabel" style="font-size:.9rem;opacity:.7">掐丝珐琅工作室</span>
+    <a class="btn btn-red" href="index.html">← 返回首页</a>
+  </div>
+</nav>
+
+<header class="subhero" style="--accent:#006CB7">
+  <div class="wrap subhero-grid">
+    <div>
+      <span class="hero-badge">🔵 掐丝珐琅工作室 · 真·可编辑</span>
+      <h1>自己动手<br>掐出<span class="hl">一朵花</span></h1>
+      <p class="lead">这不是拼豆的格子板，是一块可以自由手绘的珐琅胎板：描金线、填釉色、点鎏金珠，照着七道工序一步步来，作品存本地、一键导出 PNG。</p>
+      <div class="hero-cta">
+        <a class="btn btn-red" href="#studio">🎨 进工作室画</a>
+        <a class="btn btn-ghost" href="#craft">看七道工序 ↓</a>
+      </div>
+    </div>
+    <div class="subhero-media">
+      <img src="assets/img/cloisonne-hero.svg" alt="掐丝珐琅团花与胸针" class="subhero-img">
+    </div>
+  </div>
+</header>
+
+<section id="studio" class="studio-wrap">
+
+  <!-- 左：工具 + 色板 + 笔触 + 操作 -->
+  <aside class="panel studio-panel">
+    <h4>🛠 工具</h4>
+    <div class="st-tool-row">
+      <div class="st-tool active" data-tool="wire"><span class="gi">🪡</span>掐丝</div>
+      <div class="st-tool" data-tool="fill"><span class="gi">🪣</span>点蓝</div>
+      <div class="st-tool" data-tool="bead"><span class="gi">🔆</span>贴珠</div>
+      <div class="st-tool" data-tool="erase"><span class="gi">🧽</span>橡皮</div>
+    </div>
+
+    <h4>🧵 丝色</h4>
+    <div class="st-palette" id="wirePalette"></div>
+
+    <h4>🎨 釉色</h4>
+    <div class="st-palette" id="enamelPalette"></div>
+
+    <h4>✏️ 笔触</h4>
+    <div class="st-range">
+      <label>丝粗细</label>
+      <input type="range" id="wireWidth" min="2" max="14" value="6">
+      <span class="val" id="wireWidthVal">6</span>
+    </div>
+    <div class="st-range">
+      <label>珠/橡皮</label>
+      <input type="range" id="beadSize" min="6" max="22" value="11">
+      <span class="val" id="beadSizeVal">11</span>
+    </div>
+    <h4 style="margin-top:1rem">🟫 胎板</h4>
+    <div class="st-seg plate"></div>
+    <h4 style="margin-top:1rem">📋 线稿底图</h4>
+    <div class="st-seg" style="margin-bottom:.5rem">
+      <button id="btnGuide">👁 线稿底图：关</button>
+      <button id="btnUpload">⬆ 上传线稿</button>
+    </div>
+    <input type="file" id="guideUpload" class="hidden-file" accept="image/*">
+
+    <h4 style="margin-top:1.2rem">💾 操作</h4>
+    <div class="st-actions">
+      <button class="btn btn-ghost" id="btnUndo">↩ 撤销</button>
+      <button class="btn btn-ghost" id="btnRedo">↪ 重做</button>
+      <button class="btn btn-ghost" id="btnClear">🗑 清空</button>
+      <button class="btn btn-ghost" id="btnSave">💾 存草稿</button>
+      <button class="btn btn-yellow" id="btnExport" style="grid-column:1 / -1">⬇ 导出 PNG 作品</button>
+    </div>
+    <p class="hint" style="margin-top:1rem">先「掐丝」围出轮廓，再「点蓝」填色；没围住就填会提示你先掐丝。草稿自动存浏览器本地。</p>
+  </aside>
+
+  <!-- 中：画板 -->
+  <main class="canvas-stage">
+    <div style="font-family:var(--font-disp);font-weight:800;font-size:1.2rem;margin-bottom:.8rem">🟦 珐琅胎板</div>
+    <div class="studio-stage">
+      <div class="studio-plate" id="plate" style="background:#10151c">
+        <img class="guide-img" id="guideImg" src="assets/img/process-1.svg" alt="线稿底图" hidden>
+        <canvas id="clCanvas"></canvas>
+      </div>
+    </div>
+    <div class="stage-tools">
+      <button class="btn btn-orange" id="btnGuide2" onclick="document.getElementById('btnGuide').click()">👁 线稿底图</button>
+      <button class="btn btn-ghost" id="btnClear2" onclick="document.getElementById('btnClear').click()">🗑 清空</button>
+    </div>
+    <p class="hint">按住鼠标拖动可连续掐丝 · 支持触屏 · 数据全程在本地，不上传服务器</p>
+  </main>
+
+</section>
+
+<!-- 七道工序引导 -->
+<section id="craft" class="proc-sec studio-proc" style="--accent:#006CB7">
+  <div class="wrap proc-inner">
+    <div class="proc-head">
+      <span class="hero-badge">🪡 掐丝珐琅 · 七道工序</span>
+      <h2>从线稿到珐琅胸针</h2>
+      <p>点上面的步骤，工具会自动切到对应环节。先在画板掐丝围轮廓，再点蓝填釉、贴珠，最后导出作品。</p>
+    </div>
+
+    <div class="proc-steps" id="procSteps"><!-- JS 注入 7 个步骤胶囊 --></div>
+
+    <div class="proc-detail">
+      <div class="proc-media"><img id="procImg" src="assets/img/process-1.svg" alt="贴线稿"></div>
+      <div class="proc-text">
+        <div class="proc-no" id="procNo">1 / 7</div>
+        <h3 id="procTitle">贴线稿</h3>
+        <p class="proc-desc" id="procDesc"></p>
+        <div class="proc-tip" id="procTip"></div>
+        <button class="btn btn-yellow" id="procAction" style="display:none;width:100%;justify-content:center;margin-top:.4rem"></button>
+        <div class="proc-progress"><div class="proc-bar" id="procBar"></div></div>
+        <div class="proc-nav">
+          <button class="btn btn-ghost" id="procPrev">← 上一步</button>
+          <button class="btn btn-red" id="procNext">下一步 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-grid">
+    <div>
+      <div class="brand" style="color:#fff;margin-bottom:.6rem"><span class="logo"></span>拼豆星球 PIXELBEAD</div>
+      <p style="max-width:38ch;opacity:.85">一个属于像素拼豆创作者的小星球。零门槛、超解压、万物皆可拼。</p>
+      <div class="foot-social"><span>📕</span><span>🎵</span><span>💬</span><span>🐙</span></div>
+    </div>
+    <div>
+      <h4>创作</h4>
+      <p><a href="designer.html">拼豆设计器</a></p>
+      <p><a href="cloisonne-studio.html">掐丝珐琅工作室</a></p>
+      <p><a href="toys.html">玩具模块</a></p>
+      <p><a href="architecture.html">建筑模块</a></p>
+    </div>
+    <div>
+      <h4>关于</h4>
+      <p><a href="index.html#modules">四大模块</a></p>
+      <p><a href="index.html#buzz">爆款灵感</a></p>
+      <p><a href="index.html#cta">3D 打印</a></p>
+      <p><a href="index.html#top">回到首页</a></p>
+    </div>
+  </div>
+  <div class="wrap"><p class="small">© 2026 LDPIXELBEAD · 由创作者用 ❤ 与 🧩 搭起来 · 工作室纯本地运行，照片不上传。</p></div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="assets/js/cloisonne-studio.js"></script>
+</body>
+</html>

@@ -218,6 +218,5 @@ const ARCH_PATTERNS = [
 
 window.MODULES = {
   pixel:        { label:'像素拼豆', palette: window.PALETTE,         patterns: window.PATTERNS },
-  cloisonne:    { label:'掐丝珐琅', palette: CLOISONNE_PALETTE,      patterns: CLOISONNE_PATTERNS },
   architecture: { label:'建筑',     palette: ARCH_PALETTE,          patterns: ARCH_PATTERNS }
 };

@@ -27,7 +27,7 @@
   let drawing = false;
   let undoStack = [], redoStack = [];
 
-  /* ---------- 模块切换（像素拼豆 / 掐丝珐琅 / 建筑）---------- */
+  /* ---------- 模块切换（像素拼豆 / 建筑）---------- */
   function getModule(){
     const p = new URLSearchParams(location.search).get('m');
     return (p && window.MODULES && window.MODULES[p]) ? p : 'pixel';
@@ -46,92 +46,7 @@
     document.querySelectorAll('#moduleTabs .mtab').forEach(b=>b.classList.toggle('active', b.dataset.mod===m));
     if(history.replaceState) history.replaceState(null, '', m==='pixel' ? location.pathname : '?m='+m);
     loadPattern(mod.patterns[0]); // 载入首个模板，给第一眼惊艳
-    if(m==='cloisonne') showProcessGuide(); else hideProcessGuide();
   }
-
-  /* ---------- 掐丝珐琅 七道工序引导 ---------- */
-  const CLOISONNE_STEPS = [
-    { n:1, name:'贴线稿', img:'assets/img/process-1.svg', title:'贴线稿',
-      desc:'设计器图纸贴胎板做底稿',
-      tip:'在上方画板排好纹样，点「⬇ PNG 图案图」导出线稿，贴在铜胎板上就是掐丝底稿。',
-      action:{ label:'🎨 去画板排纹样', go:'canvas' } },
-    { n:2, name:'涂胶', img:'assets/img/process-2.svg', title:'涂胶',
-      desc:'边缘薄涂粘接胶',
-      tip:'沿纹样边缘薄薄涂一层粘接胶，等半干、不粘手时再上丝。' },
-    { n:3, name:'掐丝', img:'assets/img/process-3.svg', title:'掐丝',
-      desc:'弯出细金线，立起筋骨',
-      tip:'按线稿弯出细铜/金线，用镊子立起纹样筋骨，决定成品轮廓。' },
-    { n:4, name:'调砂', img:'assets/img/process-4.svg', title:'调砂',
-      desc:'调出珐琅釉料',
-      tip:'按比例调出各色珐琅釉料，磨成细砂、加水调到合适稠度。' },
-    { n:5, name:'点蓝', img:'assets/img/process-5.svg', title:'点蓝',
-      desc:'填釉料进丝间',
-      tip:'用毛笔把釉料填进丝与丝之间，颜色饱满、不透底。' },
-    { n:6, name:'贴珠', img:'assets/img/process-6.svg', title:'贴珠',
-      desc:'花心点鎏金珠',
-      tip:'在花心与丝端点上鎏金珠，增加立体贵气与高光。' },
-    { n:7, name:'成品展示', img:'assets/img/process-7.svg', title:'成品展示',
-      desc:'烧制磨光后胸针完成',
-      tip:'入窑烧制、冷却后反复磨光，一枚国风珐琅胸针就完成了！' }
-  ];
-  let procStep = 0;
-  const procSec    = document.getElementById('processGuide');
-  const procSteps  = document.getElementById('procSteps');
-  const procImg    = document.getElementById('procImg');
-  const procNo     = document.getElementById('procNo');
-  const procTitle  = document.getElementById('procTitle');
-  const procDesc   = document.getElementById('procDesc');
-  const procTip    = document.getElementById('procTip');
-  const procBar    = document.getElementById('procBar');
-  const procPrev   = document.getElementById('procPrev');
-  const procNext   = document.getElementById('procNext');
-  const procAction = document.getElementById('procAction');
-
-  function buildProcChips(){
-    if(!procSteps) return;
-    procSteps.innerHTML='';
-    CLOISONNE_STEPS.forEach((s,i)=>{
-      const chip=document.createElement('button');
-      chip.className='proc-chip'; chip.dataset.i=i;
-      chip.innerHTML='<span class="num">'+s.n+'</span>'+s.name;
-      chip.addEventListener('click',()=>setStep(i));
-      procSteps.appendChild(chip);
-    });
-  }
-  function setStep(i){
-    if(!procSec) return;
-    procStep = Math.max(0, Math.min(CLOISONNE_STEPS.length-1, i));
-    const s = CLOISONNE_STEPS[procStep];
-    procImg.src = s.img; procImg.alt = s.title;
-    procNo.textContent = s.n + ' / ' + CLOISONNE_STEPS.length;
-    procTitle.textContent = s.title;
-    procDesc.textContent = s.desc;
-    procTip.textContent = s.tip;
-    procBar.style.width = ((procStep+1)/CLOISONNE_STEPS.length*100) + '%';
-    procSteps.querySelectorAll('.proc-chip').forEach((c,ci)=>{
-      c.classList.toggle('active', ci===procStep);
-      c.classList.toggle('done', ci<procStep);
-    });
-    procPrev.disabled = (procStep===0);
-    procNext.textContent = (procStep===CLOISONNE_STEPS.length-1) ? '完成 ✓' : '下一步 →';
-    if(s.action){ procAction.style.display=''; procAction.textContent=s.action.label; }
-    else { procAction.style.display='none'; }
-  }
-  function showProcessGuide(){
-    if(!procSec) return;
-    buildProcChips(); setStep(0); procSec.hidden=false;
-  }
-  function hideProcessGuide(){ if(procSec) procSec.hidden=true; }
-
-  if(procPrev) procPrev.addEventListener('click',()=>setStep(procStep-1));
-  if(procNext) procNext.addEventListener('click',()=>{
-    if(procStep===CLOISONNE_STEPS.length-1){ toast('七道工序完成，去烧制你的珐琅胸针吧！'); return; }
-    setStep(procStep+1);
-  });
-  if(procAction) procAction.addEventListener('click',()=>{
-    const a=CLOISONNE_STEPS[procStep].action;
-    if(a && a.go==='canvas'){ const cv=document.getElementById('beadCanvas'); if(cv) cv.scrollIntoView({behavior:'smooth',block:'center'}); }
-  });
 
   /* ---------- 初始化 ---------- */
   function blankGrid(c,r){ const g=[]; for(let y=0;y<r;y++){ const row=[]; for(let x=0;x<c;x++) row.push(null); g.push(row);} return g; }
@@ -372,7 +287,6 @@
   iso.width=600; iso.height=440;
   applyModule(MODULE);                 // 按 URL ?m= 载入对应模块的调色板 / 预设 / 首个模板
   document.querySelectorAll('#moduleTabs .mtab').forEach(b=>{
-    b.addEventListener('click',()=>{ applyModule(b.dataset.mod);
-      if(b.dataset.mod==='cloisonne' && procSec) procSec.scrollIntoView({behavior:'smooth',block:'nearest'}); });
+    b.addEventListener('click',()=>applyModule(b.dataset.mod));
   });
 })();

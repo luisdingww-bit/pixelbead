@@ -1,0 +1,90 @@
+/* =========================================================
+   掐丝珐琅工作室 — 专属样式（复用站点乐高风变量）
+   ========================================================= */
+
+/* ---------- 布局 ---------- */
+.studio-wrap{
+  display:grid;
+  grid-template-columns:268px 1fr;
+  gap:1.2rem;
+  padding:1.2rem clamp(1rem,3vw,2rem) 2.4rem;
+  align-items:start;
+}
+.studio-panel h4{
+  font-family:var(--font-disp); font-weight:800; font-size:1.02rem;
+  margin:.4rem 0 .7rem; display:flex; align-items:center; gap:.4rem;
+}
+.studio-panel h4:not(:first-child){ margin-top:1.3rem; }
+.studio-panel .hint{ font-size:.82rem; color:#6a707c; line-height:1.5; }
+
+/* ---------- 工具按钮 ---------- */
+.st-tool-row{ display:grid; grid-template-columns:repeat(2,1fr); gap:.5rem; }
+.st-tool{
+  display:flex; flex-direction:column; align-items:center; gap:.18rem;
+  padding:.6rem .2rem; border-radius:11px; border:3px solid rgba(0,0,0,.1);
+  background:#fff; cursor:pointer; font-weight:700; font-size:.86rem; color:#3a3f4a;
+  transition:transform .1s ease, background .1s ease;
+}
+.st-tool:hover{ background:var(--paper-2); transform:translateY(-2px); }
+.st-tool.active{ background:var(--brick-blue); color:#fff; border-color:rgba(0,0,0,.2); box-shadow:0 4px 0 var(--shadow-hard); }
+.st-tool .gi{ font-size:1.25rem; }
+
+/* ---------- 色板 ---------- */
+.st-palette{ display:grid; grid-template-columns:repeat(5,1fr); gap:.4rem; }
+.st-swatch{
+  aspect-ratio:1; border-radius:9px; cursor:pointer; border:2px solid rgba(0,0,0,.18);
+  position:relative; transition:transform .1s ease;
+}
+.st-swatch:hover{ transform:scale(1.08); }
+.st-swatch.on{ outline:3px solid #fff; box-shadow:0 0 0 3px var(--ink); }
+.st-swatch .nm{
+  position:absolute; left:0; right:0; bottom:-1.05rem; text-align:center;
+  font-size:.6rem; color:#565c68; font-weight:700; white-space:nowrap;
+}
+.st-palette.has-name{ padding-bottom:1.1rem; }
+
+/* ---------- 笔触控件 ---------- */
+.st-range{ display:flex; align-items:center; gap:.6rem; margin:.5rem 0; font-size:.85rem; font-weight:700; }
+.st-range label{ width:4.6rem; color:#3a3f4a; }
+.st-range input[type=range]{ flex:1; accent-color:var(--brick-blue); }
+.st-range .val{ width:2.6rem; text-align:right; color:var(--brick-blue); }
+
+.st-seg{ display:flex; gap:.4rem; flex-wrap:wrap; }
+.st-seg button{
+  padding:.4rem .7rem; border-radius:9px; border:3px solid rgba(0,0,0,.1);
+  background:#fff; cursor:pointer; font-weight:700; font-size:.82rem; color:#3a3f4a;
+}
+.st-seg button.on{ background:var(--brick-blue); color:#fff; border-color:rgba(0,0,0,.2); }
+
+/* ---------- 操作按钮 ---------- */
+.st-actions{ display:grid; grid-template-columns:repeat(2,1fr); gap:.5rem; }
+.st-actions .btn{ width:100%; justify-content:center; font-size:.84rem; padding:.55rem .4rem; }
+
+/* ---------- 画板（胎板 + 线稿 + 画布） ---------- */
+.studio-stage{ display:flex; justify-content:center; }
+.studio-plate{
+  position:relative; display:inline-block; border-radius:14px;
+  border:4px solid rgba(0,0,0,.16);
+  box-shadow:0 8px 0 var(--shadow-hard), 0 16px 30px var(--shadow);
+  overflow:hidden; line-height:0;
+}
+#clCanvas{
+  display:block; width:100%; height:auto; max-width:760px;
+  background:transparent; cursor:crosshair; touch-action:none;
+}
+.guide-img{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:contain; opacity:.22; pointer-events:none; mix-blend-mode:screen;
+}
+.studio-stage .stage-tools{
+  display:flex; gap:.6rem; flex-wrap:wrap; align-items:center; justify-content:center;
+  margin-top:1rem;
+}
+.studio-stage .hint{ text-align:center; margin-top:.6rem; }
+
+/* ---------- 七道工序引导（复用 .proc-* 主题蓝） ---------- */
+.studio-proc{ background:linear-gradient(180deg,#fff 0%, #FFF7EC 100%); padding:3.4rem 0 4rem; }
+
+@media(max-width:860px){
+  .studio-wrap{ grid-template-columns:1fr; }
+}
