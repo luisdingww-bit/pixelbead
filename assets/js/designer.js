@@ -28,8 +28,8 @@
   let undoStack = [], redoStack = [];
 
   /* ---------- 边框（展示框） ---------- */
-  let frameOn = true, frameColor = '#E3000B';
-  const FRAME_PX = 22;
+  let frameOn = true, frameTheme = 'camera', frameColor = '#006CB7';
+  const FRAME_PX = 34;
   let FRAME = frameOn ? FRAME_PX : 0;
 
   /* ---------- 模块切换（像素拼豆 / 建筑）---------- */
@@ -63,19 +63,144 @@
     canvas.height = ROWS*CELL + FRAME*2;
   }
 
-  /* ---------- 边框绘制（乐高风：填色 + 倒角 + 凸点） ---------- */
+  /* ---------- 主题边框（爆款/动漫/相机风） ---------- */
   function stud(c,x,y,r,col){
     c.beginPath(); c.arc(x,y,r,0,Math.PI*2); c.fillStyle=col; c.fill();
     c.beginPath(); c.arc(x-r*0.3,y-r*0.3,r*0.42,0,Math.PI*2); c.fillStyle='rgba(255,255,255,.35)'; c.fill();
   }
+  function heartPath(c,cx,cy,r){
+    c.beginPath();
+    const x=cx, y=cy;
+    c.moveTo(x,y+r*0.3);
+    c.bezierCurveTo(x-r*0.55,y-r*0.45, x-r*1.1,y+r*0.15, x,y+r*1.15);
+    c.bezierCurveTo(x+r*1.1,y+r*0.15, x+r*0.55,y-r*0.45, x,y+r*0.3);
+    c.closePath();
+  }
+  function starPath(c,cx,cy,R){
+    c.beginPath();
+    for(let i=0;i<10;i++){ const a=Math.PI/2+i*Math.PI/5; const r=i%2?R*0.42:R; c.lineTo(cx+Math.cos(a)*r, cy-Math.sin(a)*r); }
+    c.closePath();
+  }
+  const FRAME_THEMES={
+    lego:{ name:'乐高', emoji:'🧱', defaultColor:'#E3000B',
+      draw(c,bx,by,bw,bh,col){
+        const w=canvas.width, h=canvas.height;
+        c.fillStyle=col; c.fillRect(0,0,w,h);
+        c.lineWidth=3; c.strokeStyle=shade(col,-0.32); c.strokeRect(FRAME*0.5,FRAME*0.5,w-FRAME,h-FRAME);
+        c.lineWidth=2; c.strokeStyle=shade(col,0.28); c.strokeRect(FRAME*0.5+3,FRAME*0.5+3,w-FRAME-6,h-FRAME-6);
+        const sr=Math.max(3,FRAME*0.18), step=FRAME*1.35, sc=shade(col,0.30);
+        for(let x=FRAME*0.5+step/2; x<w-FRAME*0.5; x+=step){ stud(c,x,FRAME*0.5+FRAME*0.34,sr,sc); stud(c,x,h-FRAME*0.5-FRAME*0.34,sr,sc); }
+        for(let y=FRAME*0.5+step/2; y<h-FRAME*0.5; y+=step){ stud(c,FRAME*0.5+FRAME*0.34,y,sr,sc); stud(c,w-FRAME*0.5-FRAME*0.34,y,sr,sc); }
+      }
+    },
+    camera:{ name:'相机', emoji:'📷', defaultColor:'#006CB7',
+      draw(c,bx,by,bw,bh,col){
+        const w=canvas.width, h=canvas.height, dark=shade(col,-0.35), light=shade(col,0.28);
+        c.fillStyle=col; c.fillRect(0,0,w,h);
+        // 顶部取景器
+        c.fillStyle=dark; c.fillRect(bx+bw*0.38, FRAME*0.18, bw*0.24, FRAME*0.42);
+        c.fillStyle=light; c.fillRect(bx+bw*0.40, FRAME*0.22, bw*0.20, FRAME*0.30);
+        // 两侧装饰条
+        c.fillStyle=dark; c.fillRect(FRAME*0.18, by+bh*0.35, FRAME*0.28, bh*0.30); c.fillRect(w-FRAME*0.46, by+bh*0.35, FRAME*0.28, bh*0.30);
+        // 底部大镜头
+        const lx=w/2, ly=h-FRAME*0.52, lr=FRAME*0.62;
+        c.beginPath(); c.arc(lx,ly,lr,0,Math.PI*2); c.fillStyle='#1a1a1a'; c.fill(); c.lineWidth=3; c.strokeStyle=light; c.stroke();
+        c.beginPath(); c.arc(lx,ly,lr*0.72,0,Math.PI*2); c.fillStyle=dark; c.fill();
+        c.beginPath(); c.arc(lx-3,ly-3,lr*0.38,0,Math.PI*2); c.fillStyle='rgba(255,255,255,.22)'; c.fill();
+        // 四角螺丝
+        [[bx+8,by+8],[bx+bw-8,by+8],[bx+8,by+bh-8],[bx+bw-8,by+bh-8]].forEach(p=>{ c.beginPath(); c.arc(p[0],p[1],3,0,Math.PI*2); c.fillStyle=light; c.fill(); });
+      }
+    },
+    polaroid:{ name:'拍立得', emoji:'🖼️', defaultColor:'#f4f4f4',
+      draw(c,bx,by,bw,bh,col){
+        const w=canvas.width, h=canvas.height;
+        c.fillStyle=col; c.fillRect(0,0,w,h);
+        // 照片区白边
+        c.fillStyle='#fff'; c.fillRect(FRAME*0.45, FRAME*0.35, w-FRAME*0.9, h-FRAME*0.85);
+        c.lineWidth=2; c.strokeStyle='rgba(0,0,0,.08)'; c.strokeRect(FRAME*0.45, FRAME*0.35, w-FRAME*0.9, h-FRAME*0.85);
+        // 底部留白写字区
+        c.fillStyle=col; c.fillRect(FRAME*0.45, h-FRAME*0.70, w-FRAME*0.9, FRAME*0.55);
+        c.fillStyle='#aaa'; c.font='bold 10px sans-serif'; c.textAlign='center';
+        c.fillText('LDPIXEL', w/2, h-FRAME*0.38);
+      }
+    },
+    heart:{ name:'爱心', emoji:'💖', defaultColor:'#E3000B',
+      draw(c,bx,by,bw,bh,col){
+        const w=canvas.width, h=canvas.height;
+        c.fillStyle=col; c.fillRect(0,0,w,h);
+        c.fillStyle=shade(col,0.35);
+        heartPath(c,w/2,FRAME*0.58,FRAME*0.55); c.fill();
+        heartPath(c,FRAME*0.45,by+bh*0.22,FRAME*0.24); c.fill();
+        heartPath(c,w-FRAME*0.45,by+bh*0.78,FRAME*0.24); c.fill();
+        heartPath(c,FRAME*0.45,by+bh*0.78,FRAME*0.20); c.fill();
+        heartPath(c,w-FRAME*0.45,by+bh*0.22,FRAME*0.20); c.fill();
+      }
+    },
+    star:{ name:'星星', emoji:'⭐', defaultColor:'#FFD500',
+      draw(c,bx,by,bw,bh,col){
+        const w=canvas.width, h=canvas.height;
+        c.fillStyle=col; c.fillRect(0,0,w,h);
+        c.fillStyle=shade(col,0.25);
+        const spots=[[w/2,FRAME*0.55],[FRAME*0.45,by+bh*0.18],[w-FRAME*0.45,by+bh*0.18],[FRAME*0.45,by+bh*0.82],[w-FRAME*0.45,by+bh*0.82]];
+        spots.forEach((p,i)=>{ starPath(c,p[0],p[1],FRAME*(0.28-i*0.02)); c.fill(); });
+        // 流星线条
+        c.strokeStyle=shade(col,0.45); c.lineWidth=2; c.lineCap='round';
+        [[bx+8,by+8,bx+22,by+22],[bx+bw-8,by+8,bx+bw-22,by+22],[bx+8,by+bh-8,bx+22,by+bh-22],[bx+bw-8,by+bh-8,bx+bw-22,by+bh-22]].forEach(l=>{ c.beginPath(); c.moveTo(l[0],l[1]); c.lineTo(l[2],l[3]); c.stroke(); });
+      }
+    },
+    gamepad:{ name:'手柄', emoji:'🎮', defaultColor:'#1c1c1c',
+      draw(c,bx,by,bw,bh,col){
+        const w=canvas.width, h=canvas.height;
+        c.fillStyle=col; c.fillRect(0,0,w,h);
+        // 顶部横条
+        c.fillStyle=shade(col,0.22); c.fillRect(FRAME*0.25, FRAME*0.22, w-FRAME*0.5, FRAME*0.38);
+        // 左侧十字键
+        const cx1=bx+FRAME*0.55, cy1=FRAME*0.42, u=FRAME*0.16;
+        c.fillStyle='#eee'; c.fillRect(cx1-u/2, cy1-u*1.5, u, u*3); c.fillRect(cx1-u*1.5, cy1-u/2, u*3, u);
+        // 右侧 AB 键
+        const cx2=w-bx-FRAME*0.55, cy2=FRAME*0.42;
+        c.beginPath(); c.arc(cx2-u*0.7,cy2-u*0.4,u*0.55,0,Math.PI*2); c.fillStyle='#E3000B'; c.fill();
+        c.beginPath(); c.arc(cx2+u*0.7,cy2+u*0.4,u*0.55,0,Math.PI*2); c.fillStyle='#FFD500'; c.fill();
+        // 底部 select/start
+        c.fillStyle=shade(col,0.45); c.fillRect(bx+bw*0.25, h-FRAME*0.55, bw*0.18, FRAME*0.12); c.fillRect(bx+bw*0.57, h-FRAME*0.55, bw*0.18, FRAME*0.12);
+      }
+    },
+    comic:{ name:'漫画框', emoji:'💬', defaultColor:'#fff',
+      draw(c,bx,by,bw,bh,col){
+        const w=canvas.width, h=canvas.height;
+        c.fillStyle=col; c.fillRect(0,0,w,h);
+        // 粗黑外框
+        c.lineWidth=5; c.strokeStyle='#1a1a1a'; c.strokeRect(FRAME*0.35, FRAME*0.35, w-FRAME*0.7, h-FRAME*0.7);
+        c.lineWidth=2; c.strokeStyle='#1a1a1a';
+        // 底部尖角对话框
+        c.beginPath(); c.moveTo(w/2-FRAME*0.55, h-FRAME*0.35); c.lineTo(w/2+FRAME*0.55, h-FRAME*0.35); c.lineTo(w/2, h-FRAME*0.08); c.closePath(); c.fillStyle=col; c.fill(); c.stroke();
+        // 网点底纹
+        c.fillStyle='rgba(0,0,0,.06)';
+        for(let y=FRAME*0.5; y<h-FRAME*0.5; y+=7) for(let x=FRAME*0.5; x<w-FRAME*0.5; x+=7) if((x+y)%14===0) c.fillRect(x,y,2,2);
+      }
+    },
+    sakura:{ name:'樱花', emoji:'🌸', defaultColor:'#ff9ec8',
+      draw(c,bx,by,bw,bh,col){
+        const w=canvas.width, h=canvas.height;
+        c.fillStyle=col; c.fillRect(0,0,w,h);
+        function petal(px,py,r,rot){
+          c.save(); c.translate(px,py); c.rotate(rot);
+          c.beginPath(); c.ellipse(0,-r*0.6,r*0.35,r*0.7,0,0,Math.PI*2); c.fill();
+          c.restore();
+        }
+        function flower(px,py,r){ for(let i=0;i<5;i++) petal(px,py,r,i*Math.PI*2/5); c.beginPath(); c.arc(px,py,r*0.22,0,Math.PI*2); c.fillStyle='#fff7e0'; c.fill(); }
+        c.fillStyle=shade(col,0.12);
+        [[bx+FRAME*0.35,by+FRAME*0.35],[w-bx-FRAME*0.35,by+FRAME*0.35],[bx+FRAME*0.35,by+bh-FRAME*0.35],[w-bx-FRAME*0.35,by+bh-FRAME*0.35]].forEach(p=>flower(p[0],p[1],FRAME*0.32));
+        // 飘落花瓣
+        c.fillStyle=shade(col,0.25);
+        [[w/2,FRAME*0.55],[FRAME*0.55,h/2],[w-FRAME*0.55,h/2]].forEach((p,i)=>petal(p[0],p[1],FRAME*(0.22-i*0.02), Math.PI/4+i));
+      }
+    }
+  };
+  function getTheme(){ return FRAME_THEMES[frameTheme] || FRAME_THEMES.lego; }
   function drawFrame(c){
-    const w=canvas.width, h=canvas.height;
-    c.fillStyle=frameColor; c.fillRect(0,0,w,h);
-    c.lineWidth=3; c.strokeStyle=shade(frameColor,-0.32); c.strokeRect(FRAME*0.5,FRAME*0.5,w-FRAME,h-FRAME);
-    c.lineWidth=2; c.strokeStyle=shade(frameColor,0.28); c.strokeRect(FRAME*0.5+3,FRAME*0.5+3,w-FRAME-6,h-FRAME-6);
-    const sr=Math.max(3,FRAME*0.20), step=FRAME*1.5, col=shade(frameColor,0.30);
-    for(let x=FRAME*0.5+step/2; x<w-FRAME*0.5; x+=step){ stud(c,x,FRAME*0.5+FRAME*0.34,sr,col); stud(c,x,h-FRAME*0.5-FRAME*0.34,sr,col); }
-    for(let y=FRAME*0.5+step/2; y<h-FRAME*0.5; y+=step){ stud(c,FRAME*0.5+FRAME*0.34,y,sr,col); stud(c,w-FRAME*0.5-FRAME*0.34,y,sr,col); }
+    const w=canvas.width, h=canvas.height, bx=FRAME, by=FRAME, bw=w-FRAME*2, bh=h-FRAME*2;
+    const t=getTheme(); if(t&&t.draw) t.draw(c,bx,by,bw,bh,frameColor);
   }
 
   function render(){
@@ -238,15 +363,18 @@
     img.src=url;
   });
 
-  /* ---------- 导出 PNG（含边框） ---------- */
+  /* ---------- 导出 PNG（含主题边框） ---------- */
   function exportPNG(){
     const sc=20; const fr = frameOn ? Math.round(FRAME_PX*sc/30) : 0;
     const off=document.createElement('canvas'); off.width=COLS*sc+fr*2; off.height=ROWS*sc+fr*2;
     const octx=off.getContext('2d');
     if(frameOn){
-      octx.fillStyle=frameColor; octx.fillRect(0,0,off.width,off.height);
-      octx.lineWidth=4; octx.strokeStyle=shade(frameColor,-0.32); octx.strokeRect(fr*0.5,fr*0.5,off.width-fr,off.height-fr);
-      octx.lineWidth=2; octx.strokeStyle=shade(frameColor,0.28); octx.strokeRect(fr*0.5+4,fr*0.5+4,off.width-fr-8,off.height-fr-8);
+      const t=getTheme();
+      // 模拟 canvas 坐标系调用主题 draw（主题函数读取 canvas.width/height，这里临时赋值）
+      const savedW=canvas.width, savedH=canvas.height;
+      canvas.width=off.width; canvas.height=off.height;
+      t.draw(octx, fr, fr, off.width-fr*2, off.height-fr*2, frameColor);
+      canvas.width=savedW; canvas.height=savedH;
     }
     octx.save(); octx.translate(fr,fr);
     window.drawBeads(octx,grid,COLS,ROWS,sc,true);
@@ -326,15 +454,56 @@
   document.getElementById('btnPhoto').addEventListener('click',()=>fileInput.click());
 
   /* ---------- 边框 UI ---------- */
-  const FRAME_COLORS=[{name:'红',hex:'#E3000B'},{name:'木',hex:'#6e4a2e'},{name:'黑',hex:'#1c1c1c'},{name:'蓝',hex:'#006CB7'},{name:'绿',hex:'#00A650'}];
+  const FRAME_COLORS=[{name:'红',hex:'#E3000B'},{name:'粉',hex:'#ff9ec8'},{name:'黄',hex:'#FFD500'},{name:'蓝',hex:'#006CB7'},{name:'黑',hex:'#1c1c1c'},{name:'白',hex:'#f4f4f4'}];
+  function frameThumbSVG(theme,color){
+    const size=44, f=10;
+    const bg=theme.defaultColor==='#f4f4f4'?'#e8e8e8':theme.defaultColor;
+    // 用 offscreen canvas 生成 data URI 缩略图
+    const oc=document.createElement('canvas'); oc.width=size; oc.height=size;
+    const ox=oc.getContext('2d');
+    // 临时让主题 draw 渲染到缩略图（模拟完整 canvas 尺寸）
+    const savedW=canvas.width, savedH=canvas.height;
+    canvas.width=size; canvas.height=size;
+    theme.draw(ox, f, f, size-f*2, size-f*2, color);
+    canvas.width=savedW; canvas.height=savedH;
+    return oc.toDataURL('image/png');
+  }
   function buildFrameUI(){
     const fc=document.getElementById('frameColors'); if(!fc) return; fc.innerHTML='';
-    FRAME_COLORS.forEach(c=>{
-      const s=document.createElement('div'); s.className='fs'; s.style.background=c.hex; s.title=c.name;
-      if(c.hex===frameColor) s.classList.add('on');
-      s.addEventListener('click',()=>{ frameColor=c.hex; fc.querySelectorAll('.fs').forEach(x=>x.classList.remove('on')); s.classList.add('on'); if(frameOn) render(); });
-      fc.appendChild(s);
+    // 主题网格
+    const gridWrap=document.createElement('div'); gridWrap.className='frame-theme-grid';
+    Object.keys(FRAME_THEMES).forEach(k=>{
+      const t=FRAME_THEMES[k];
+      const b=document.createElement('button'); b.className='frame-theme'+(k===frameTheme?' on':''); b.title=t.name;
+      const img=document.createElement('img'); img.src=frameThumbSVG(t,frameColor); img.alt=t.name; img.width=44; img.height=44;
+      const lab=document.createElement('span'); lab.textContent=t.emoji+' '+t.name;
+      b.appendChild(img); b.appendChild(lab);
+      b.addEventListener('click',()=>{
+        frameTheme=k;
+        // 若当前色与该主题默认色差异过大可自动换色，但保留用户选择更可控：仅当主题为 polaroid/comic 且当前深色时切白
+        if((k==='polaroid'||k==='comic') && (frameColor==='#1c1c1c'||frameColor==='#006CB7')) frameColor='#f4f4f4';
+        gridWrap.querySelectorAll('.frame-theme').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+        // 刷新所有缩略图（颜色可能已变）
+        gridWrap.querySelectorAll('.frame-theme').forEach((x,idx)=>{ const key=Object.keys(FRAME_THEMES)[idx]; x.querySelector('img').src=frameThumbSVG(FRAME_THEMES[key],frameColor); });
+        if(frameOn){ setupCanvas(); render(); }
+      });
+      gridWrap.appendChild(b);
     });
+    fc.appendChild(gridWrap);
+    // 颜色选择
+    const colorWrap=document.createElement('div'); colorWrap.className='frame-color-row';
+    FRAME_COLORS.forEach(c=>{
+      const s=document.createElement('div'); s.className='fs'+(c.hex===frameColor?' on':''); s.style.background=c.hex; s.title=c.name;
+      s.addEventListener('click',()=>{
+        frameColor=c.hex;
+        colorWrap.querySelectorAll('.fs').forEach(x=>x.classList.remove('on')); s.classList.add('on');
+        // 刷新主题缩略图颜色
+        gridWrap.querySelectorAll('.frame-theme').forEach((x,idx)=>{ const key=Object.keys(FRAME_THEMES)[idx]; x.querySelector('img').src=frameThumbSVG(FRAME_THEMES[key],frameColor); });
+        if(frameOn) render();
+      });
+      colorWrap.appendChild(s);
+    });
+    fc.appendChild(colorWrap);
     const btn=document.getElementById('btnFrame');
     if(btn){
       btn.classList.toggle('on',frameOn); btn.textContent=frameOn?'边框：开':'边框：关';
