@@ -24,9 +24,11 @@
 
 <div class="designer-wrap">
 
-  <!-- 左：工具 + 调色板 + 预设 -->
+  <!-- 左：核心工具常显，高级功能收进「更多工具」折叠分组 -->
   <aside class="panel" id="leftPanel">
     <button class="panel-toggle-m" id="leftToggle" aria-expanded="true" type="button">🛠 工具 / 调色板 <span class="caret">▾</span></button>
+
+    <!-- 核心：工具 -->
     <h4>🛠 工具</h4>
     <div class="tool-row">
       <div class="tool active" data-tool="pen"><span class="gi">✏️</span>画笔</div>
@@ -37,23 +39,8 @@
       <div class="tool" id="btnRedo"><span class="gi">↪️</span>重做</div>
     </div>
 
-    <h4>🪞 对称镜像</h4>
-    <div class="tool-row" id="symRow">
-      <div class="tool" data-sym="none"><span class="gi">⬜</span>无</div>
-      <div class="tool" data-sym="h"><span class="gi">↔️</span>左右</div>
-      <div class="tool" data-sym="v"><span class="gi">↕️</span>上下</div>
-      <div class="tool" data-sym="quad"><span class="gi">✚</span>四向</div>
-    </div>
-
-    <h4>📐 形状工具</h4>
-    <div class="tool-row" id="shapeRow">
-      <div class="tool" data-shape="line"><span class="gi">📏</span>直线</div>
-      <div class="tool" data-shape="rect"><span class="gi">⬛</span>方块</div>
-      <div class="tool" data-shape="circle"><span class="gi">⚪</span>圆</div>
-    </div>
-    <p class="hint">选形状后，在画板上按住拖拽即可绘制。</p>
-
-    <h4>🎨 调色板（品牌色库）</h4>
+    <!-- 核心：调色板 -->
+    <h4>🎨 调色板</h4>
     <select class="mini-select" id="brandSel" style="width:100%;margin-bottom:.6rem">
       <option value="">通用色（默认 28 色）</option>
       <option value="Hama">Hama 哈马</option>
@@ -63,34 +50,56 @@
     </select>
     <div class="palette" id="palette"></div>
 
-    <h4 style="margin-top:1rem">📐 板型预设</h4>
-    <div class="board-presets" id="boardPresets">
-      <button class="bp active" data-c="15" data-r="15">15×15</button>
-      <button class="bp" data-c="10" data-r="10">10×10<small>钥匙扣</small></button>
-      <button class="bp" data-c="20" data-r="20">20×20<small>杯垫</small></button>
-      <button class="bp" data-c="14" data-r="14">14×14<small>小方板</small></button>
-      <button class="bp" data-c="24" data-r="24">24×24</button>
-      <button class="bp" data-c="29" data-r="29">29×29<small>标准板</small></button>
-      <button class="bp" data-c="29" data-r="21">29×21<small>长方板</small></button>
-      <button class="bp" data-c="14" data-r="29">14×29<small>竖长板</small></button>
-    </div>
-    <p class="hint">点预设切换真实拼豆板尺寸，原图案左上角保留、其余留空。</p>
-
-    <h4 style="margin-top:1rem">🖼 边框主题</h4>
-    <button class="frame-toggle on" id="btnFrame">边框：开</button>
-    <div class="frame-colors" id="frameColors"></div>
-    <p class="hint">点主题换爆款边框，点颜色换主色，导出 PNG 也带框。</p>
-
+    <!-- 核心：预设图案 + 社区模板 -->
     <h4>✨ 预设图案</h4>
     <div class="preset-row" id="presets"></div>
 
-    <h4 style="margin-top:1rem">📚 社区模板</h4>
+    <h4>📚 社区模板</h4>
     <div class="preset-row" id="community"></div>
     <p class="hint">点击任意社区模板，直接载入画板继续编辑。更多在首页「社区模板库」。</p>
 
-    <h4 style="margin-top:1rem">🔤 文字转图案</h4>
-    <input class="mini-select" id="textInput" maxlength="12" placeholder="输入文字/网址" style="width:100%;margin-bottom:.5rem">
-    <button class="export-btn" id="btnText" style="width:100%">⬇ 生成文字图案</button>
+    <!-- 高级：默认收起 -->
+    <details class="adv">
+      <summary>⚙️ 更多工具</summary>
+
+      <h4>🪞 对称镜像</h4>
+      <div class="tool-row" id="symRow">
+        <div class="tool" data-sym="none"><span class="gi">⬜</span>无</div>
+        <div class="tool" data-sym="h"><span class="gi">↔️</span>左右</div>
+        <div class="tool" data-sym="v"><span class="gi">↕️</span>上下</div>
+        <div class="tool" data-sym="quad"><span class="gi">✚</span>四向</div>
+      </div>
+
+      <h4>📐 形状工具</h4>
+      <div class="tool-row" id="shapeRow">
+        <div class="tool" data-shape="line"><span class="gi">📏</span>直线</div>
+        <div class="tool" data-shape="rect"><span class="gi">⬛</span>方块</div>
+        <div class="tool" data-shape="circle"><span class="gi">⚪</span>圆</div>
+      </div>
+      <p class="hint">选形状后，在画板上按住拖拽即可绘制。</p>
+
+      <h4>📐 板型预设</h4>
+      <div class="board-presets" id="boardPresets">
+        <button class="bp active" data-c="15" data-r="15">15×15</button>
+        <button class="bp" data-c="10" data-r="10">10×10<small>钥匙扣</small></button>
+        <button class="bp" data-c="20" data-r="20">20×20<small>杯垫</small></button>
+        <button class="bp" data-c="14" data-r="14">14×14<small>小方板</small></button>
+        <button class="bp" data-c="24" data-r="24">24×24</button>
+        <button class="bp" data-c="29" data-r="29">29×29<small>标准板</small></button>
+        <button class="bp" data-c="29" data-r="21">29×21<small>长方板</small></button>
+        <button class="bp" data-c="14" data-r="29">14×29<small>竖长板</small></button>
+      </div>
+      <p class="hint">点预设切换真实拼豆板尺寸，原图案左上角保留、其余留空。</p>
+
+      <h4>🖼 边框主题</h4>
+      <button class="frame-toggle on" id="btnFrame">边框：开</button>
+      <div class="frame-colors" id="frameColors"></div>
+      <p class="hint">点主题换爆款边框，点颜色换主色，导出 PNG 也带框。</p>
+
+      <h4>🔤 文字转图案</h4>
+      <input class="mini-select" id="textInput" maxlength="12" placeholder="输入文字/网址" style="width:100%;margin-bottom:.5rem">
+      <button class="export-btn" id="btnText" style="width:100%">⬇ 生成文字图案</button>
+    </details>
   </aside>
 
   <!-- 中：画板 -->

@@ -315,6 +315,15 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
 .frame-color-row .fs.on{ outline:3px solid var(--ink); outline-offset:1px; transform:scale(1.08); }
 
 .hint{ font-size:.8rem; color:#777; margin-top:.4rem; }
+
+/* 设计器：高级工具可折叠分组（默认收起，降低认知负担） */
+.adv{ margin-top:1rem; border-top:2px dashed rgba(32,35,42,.12); padding-top:.9rem; }
+.adv summary{ list-style:none; cursor:pointer; font-family:var(--font-disp); font-weight:800; font-size:1.02rem;
+  display:flex; align-items:center; gap:.45rem; padding:.2rem 0; color:var(--brick-blue); user-select:none; }
+.adv summary::-webkit-details-marker{ display:none; }
+.adv summary::before{ content:"▸"; display:inline-block; transition:transform .2s ease; color:var(--brick-blue); }
+.adv[open] summary::before{ content:"▾"; }
+.adv > h4:first-of-type{ margin-top:.7rem; }
 .toast{ position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff;
   padding:.8em 1.4em; border-radius:12px; font-weight:700; opacity:0; transition:.25s; z-index:99; pointer-events:none; }
 .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
@@ -339,6 +348,8 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
     background:var(--brick-blue); color:#fff; font-weight:800; font-family:var(--font-disp); cursor:pointer; }
   .panel-toggle-m .caret{ transition:transform .2s ease; }
   #leftPanel.collapsed .tool-row,
+  #leftPanel.collapsed details,
+  #leftPanel.collapsed summary,
   #leftPanel.collapsed h4,
   #leftPanel.collapsed .palette,
   #leftPanel.collapsed .mini-select,
