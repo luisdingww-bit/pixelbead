@@ -490,20 +490,25 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
   .landmark-card .city b{ font-size:1rem; }
 }
 
-/* 像素图片例子画廊 */
-.pixel-examples{ padding:64px 0; background:linear-gradient(180deg,#ffffff 0%, #fdf2ff 100%); }
-.pixel-example-grid{
+/* 世界地标系列下方的像素参考缩略图 */
+.landmark-pixels{ margin-top:3.2rem; }
+.landmark-pixels-head{ text-align:center; margin-bottom:1.6rem; }
+.landmark-pixels-head h3{ font-family:var(--font-disp); font-weight:900; font-size:1.5rem; color:var(--ink); margin:0 0 .4rem; }
+.landmark-pixels-head p{ color:#5a5060; font-weight:500; margin:0; }
+.pixel-thumb-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));
-  gap:18px;
+  grid-template-columns:repeat(8, 1fr);
+  gap:12px;
 }
-.px-fig{ margin:0; background:#fff; border:3px solid rgba(0,0,0,.08); border-radius:16px; overflow:hidden; box-shadow:0 6px 0 var(--shadow-hard), 0 12px 22px var(--shadow); transition:transform .15s ease, box-shadow .15s ease; }
-.px-fig:hover{ transform:translateY(-6px); box-shadow:0 9px 0 var(--shadow-hard), 0 18px 30px var(--shadow); }
-.px-fig a{ display:block; text-decoration:none; color:inherit; }
-.px-fig img{ width:100%; aspect-ratio:1; object-fit:cover; image-rendering:pixelated; display:block; background:#0b1020; }
-.px-fig figcaption{ display:flex; flex-direction:column; gap:2px; padding:10px 12px; }
-.px-fig figcaption b{ font-family:var(--font-disp); font-weight:800; font-size:1.05rem; color:var(--ink); }
-.px-fig figcaption small{ color:#7a6f80; font-weight:600; font-size:.74rem; }
+.px-thumb{ margin:0; background:#fff; border:2px solid rgba(0,0,0,.08); border-radius:12px; overflow:hidden; box-shadow:0 4px 0 var(--shadow-hard), 0 9px 16px var(--shadow); transition:transform .15s ease, box-shadow .15s ease; }
+.px-thumb:hover{ transform:translateY(-5px); box-shadow:0 7px 0 var(--shadow-hard), 0 14px 24px var(--shadow); }
+.px-thumb a{ display:block; text-decoration:none; color:inherit; }
+.px-thumb img{ width:100%; aspect-ratio:1; object-fit:cover; image-rendering:pixelated; display:block; background:#0b1020; }
+.px-thumb figcaption{ padding:7px 8px; text-align:center; font-family:var(--font-disp); font-weight:800; font-size:.82rem; color:var(--ink); }
+@media(max-width:900px){
+  .pixel-thumb-grid{ grid-template-columns:repeat(4, 1fr); }
+}
 @media(max-width:560px){
-  .pixel-example-grid{ grid-template-columns:repeat(2,1fr); gap:12px; }
+  .pixel-thumb-grid{ grid-template-columns:repeat(2, 1fr); gap:10px; }
+  .px-thumb figcaption{ font-size:.76rem; }
 }
