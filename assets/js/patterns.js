@@ -220,3 +220,49 @@ window.MODULES = {
   pixel:        { label:'像素拼豆', palette: window.PALETTE,         patterns: window.PATTERNS },
   architecture: { label:'建筑',     palette: ARCH_PALETTE,          patterns: ARCH_PATTERNS }
 };
+
+/* =========================================================
+   拼豆品牌色库（对标 PixelBeads：Hama / Perler / Artkal / Nabbi）
+   每个品牌 = 近似官方色号（code + name + hex）
+   ========================================================= */
+window.BRANDS = {
+  Hama: [
+    {code:'H01',name:'白',hex:'#FFFFFF'},{code:'H02',name:'奶油',hex:'#F5E9C8'},{code:'H03',name:'黄',hex:'#FFD500'},
+    {code:'H07',name:'橙',hex:'#FF7A00'},{code:'H10',name:'红',hex:'#E3000B'},{code:'H14',name:'粉',hex:'#FF5CA8'},
+    {code:'H19',name:'浅粉',hex:'#FFC2D9'},{code:'H24',name:'酒红',hex:'#8E1B3A'},{code:'H28',name:'紫',hex:'#7B2FBF'},
+    {code:'H32',name:'蓝',hex:'#006CB7'},{code:'H36',name:'天蓝',hex:'#7EC8FF'},{code:'H41',name:'青',hex:'#00B6C4'},
+    {code:'H45',name:'绿',hex:'#00A650'},{code:'H49',name:'薄荷',hex:'#7BE0AD'},{code:'H53',name:'橄榄',hex:'#6E7B1E'},
+    {code:'H57',name:'棕',hex:'#6B4226'},{code:'H61',name:'浅棕',hex:'#C8A06A'},{code:'H65',name:'灰',hex:'#9AA0A6'},
+    {code:'H69',name:'深灰',hex:'#5F6368'},{code:'H73',name:'黑',hex:'#1A1A1A'},{code:'H77',name:'金',hex:'#F4C430'},
+    {code:'H81',name:'海军',hex:'#1B2A6B'}
+  ],
+  Perler: [
+    {code:'P01',name:'白',hex:'#FFFFFF'},{code:'P02',name:'奶油',hex:'#F3E7C9'},{code:'P03',name:'黄',hex:'#FFCE00'},
+    {code:'P07',name:'橙',hex:'#FF7A00'},{code:'P10',name:'红',hex:'#DA251D'},{code:'P14',name:'粉',hex:'#FF7FB0'},
+    {code:'P19',name:'浅粉',hex:'#FFCFE3'},{code:'P24',name:'酒红',hex:'#8E1B3A'},{code:'P28',name:'紫',hex:'#7B2FBF'},
+    {code:'P32',name:'蓝',hex:'#0A6CB6'},{code:'P36',name:'天蓝',hex:'#8FD2F0'},{code:'P41',name:'青',hex:'#00B6C4'},
+    {code:'P45',name:'绿',hex:'#00A651'},{code:'P49',name:'薄荷',hex:'#9BE3C0'},{code:'P53',name:'橄榄',hex:'#6E7B1E'},
+    {code:'P57',name:'棕',hex:'#7A4A2B'},{code:'P61',name:'浅棕',hex:'#CDA979'},{code:'P65',name:'灰',hex:'#9AA0A6'},
+    {code:'P69',name:'黑',hex:'#1A1A1A'},{code:'P77',name:'金',hex:'#E8B23A'},{code:'P81',name:'海军',hex:'#233A8C'}
+  ],
+  Artkal: [
+    {code:'A01',name:'白',hex:'#FFFFFF'},{code:'A02',name:'米白',hex:'#FBF3DE'},{code:'A03',name:'黄',hex:'#FFD400'},
+    {code:'A07',name:'橙',hex:'#FF7A1A'},{code:'A10',name:'红',hex:'#E3000B'},{code:'A14',name:'粉',hex:'#FF63A8'},
+    {code:'A19',name:'浅粉',hex:'#FFC6DD'},{code:'A24',name:'酒红',hex:'#991B3A'},{code:'A28',name:'紫',hex:'#8431C4'},
+    {code:'A32',name:'蓝',hex:'#0072C6'},{code:'A36',name:'天蓝',hex:'#86C9F2'},{code:'A41',name:'青',hex:'#00B7CB'},
+    {code:'A45',name:'绿',hex:'#00A857'},{code:'A49',name:'薄荷',hex:'#7FE0B4'},{code:'A53',name:'青柠',hex:'#B6E21A'},
+    {code:'A57',name:'棕',hex:'#6E4A2E'},{code:'A61',name:'浅棕',hex:'#C9A36A'},{code:'A65',name:'灰',hex:'#9AA0A6'},
+    {code:'A69',name:'黑',hex:'#1A1A1A'},{code:'A77',name:'金',hex:'#F2C233'},{code:'A81',name:'海军',hex:'#1B2A6B'}
+  ],
+  Nabbi: [
+    {code:'N01',name:'白',hex:'#FCFCFC'},{code:'N02',name:'奶油',hex:'#F6EAC9'},{code:'N03',name:'黄',hex:'#FFD200'},
+    {code:'N07',name:'橙',hex:'#FF7A00'},{code:'N10',name:'红',hex:'#E3000B'},{code:'N14',name:'粉',hex:'#FF6FA6'},
+    {code:'N19',name:'浅粉',hex:'#FFC9DE'},{code:'N24',name:'酒红',hex:'#8E1B3A'},{code:'N28',name:'紫',hex:'#7B2FBF'},
+    {code:'N32',name:'蓝',hex:'#0B66B0'},{code:'N36',name:'天蓝',hex:'#8FD0EF'},{code:'N41',name:'青',hex:'#00B6C4'},
+    {code:'N45',name:'绿',hex:'#00A651'},{code:'N49',name:'薄荷',hex:'#8FE1BC'},{code:'N53',name:'橄榄',hex:'#6E7B1E'},
+    {code:'N57',name:'棕',hex:'#6B4226'},{code:'N65',name:'灰',hex:'#9AA0A6'},{code:'N69',name:'黑',hex:'#1A1A1A'},
+    {code:'N77',name:'金',hex:'#F4C430'}
+  ]
+};
+window.BRAND_NAMES = Object.keys(window.BRANDS);
+

@@ -247,6 +247,7 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
 .tool:hover{ background:var(--paper-2); }
 .tool.active{ background:var(--brick-blue); color:#fff; border-color:rgba(0,0,0,.2); }
 .tool .gi{ font-size:1.2rem; }
+#symRow .tool, #shapeRow .tool{ font-size:.68rem; }
 
 .palette{ display:grid; grid-template-columns:repeat(7,1fr); gap:.35rem; }
 .swatch{ aspect-ratio:1; border-radius:8px; cursor:pointer; border:2px solid rgba(0,0,0,.18);
