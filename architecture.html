@@ -37,6 +37,17 @@
   </div>
 </header>
 
+<section class="landmarks" id="landmarks">
+  <div class="wrap">
+    <div class="landmarks-head reveal">
+      <div class="kicker">CITY LANDMARKS</div>
+      <h2>🌍 世界地标系列</h2>
+      <p>从长沙橘子洲到巴黎铁塔，把全世界的地标都拼成像素小豆。点卡片即可进入设计器继续编辑、导出图纸。</p>
+    </div>
+    <div class="landmark-grid" id="landmark-grid"></div>
+  </div>
+</section>
+
 <section id="gallery">
   <div class="wrap">
     <div class="sec-head reveal">
@@ -99,12 +110,28 @@
   <div class="wrap"><p class="small">© 2026 LDPIXELBEAD · 由创作者用 ❤ 与 🧩 搭起来 · 设计器纯本地运行，照片不上传。</p></div>
 </footer>
 
+<script src="assets/js/bead-core.js"></script>
+<script src="assets/js/patterns.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
   var els=document.querySelectorAll('.reveal');
   if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in');});return;}
   var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12});
   els.forEach(function(e){io.observe(e);});
+
+  /* 渲染世界地标卡片 */
+  var grid=document.getElementById('landmark-grid');
+  if(grid && window.MODULES && window.MODULES.architecture && window.drawBeads){
+    var patterns=window.MODULES.architecture.patterns.filter(function(p){ return p.cols===20 && p.rows===20; });
+    var cell=10;
+    patterns.forEach(function(p){
+      var card=document.createElement('a'); card.className='landmark-card reveal'; card.href='designer.html?m=architecture&p='+encodeURIComponent(p.name);
+      var cv=document.createElement('canvas'); cv.width=p.cols*cell; cv.height=p.rows*cell;
+      window.drawBeads(cv.getContext('2d'), p.data, p.cols, p.rows, cell, true);
+      var meta=document.createElement('div'); meta.className='city'; meta.innerHTML='<b>'+p.name+'</b><small>点击编辑</small>';
+      card.appendChild(cv); card.appendChild(meta); grid.appendChild(card);
+    });
+  }
 });
 </script>
 </body>

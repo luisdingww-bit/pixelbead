@@ -33,6 +33,7 @@ const INCLUDES = [
   'index.html',
   'toys.html',
   'cloisonne.html',
+  'cloisonne-studio.html',
   'architecture.html',
   'designer.html',
   '200.html',

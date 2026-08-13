@@ -417,3 +417,75 @@ footer .small{ font-size:.85rem; opacity:.7; margin-top:1.5rem; }
 .proc-nav .btn{ flex:1; justify-content:center; }
 
 @media(max-width:760px){ .proc-detail{ grid-template-columns:1fr; } }
+
+/* =========================================================
+   世界地标 / 城市风景系列
+   ========================================================= */
+.landmarks{
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255,92,168,.22), transparent 35%),
+    radial-gradient(circle at 80% 70%, rgba(126,200,255,.28), transparent 40%),
+    linear-gradient(180deg, #ffe8f0 0%, #e8f5ff 100%);
+  padding:clamp(3rem,7vw,5rem) 0;
+}
+.landmarks-head{ text-align:center; margin-bottom:2.4rem; }
+.landmarks-head .kicker{ font-family:var(--font-pixel); font-size:.7rem; color:var(--brick-pink); letter-spacing:1px; }
+.landmarks-head h2{
+  font-family:var(--font-disp); font-weight:800;
+  font-size:clamp(2rem,5vw,3.2rem);
+  margin:.5rem 0 .6rem;
+  color:#fff;
+  text-shadow:
+    3px 3px 0 var(--brick-pink),
+    -1px -1px 0 #ff8ab8,
+    0 0 18px rgba(255,92,168,.35);
+  letter-spacing:-1px;
+}
+.landmarks-head p{ color:#5a5060; max-width:56ch; margin:0 auto; font-weight:500; }
+
+.landmark-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1.4rem;
+}
+.landmark-card{
+  display:block;
+  background:linear-gradient(180deg, #fff 0%, #f3f9ff 100%);
+  border-radius:18px;
+  border:3px solid rgba(0,0,0,.08);
+  overflow:hidden;
+  box-shadow:0 6px 0 var(--shadow-hard), 0 12px 22px var(--shadow);
+  transition:transform .15s ease, box-shadow .15s ease;
+  text-decoration:none;
+  color:inherit;
+}
+.landmark-card:hover{
+  transform:translateY(-7px) rotate(-.6deg);
+  box-shadow:0 9px 0 var(--shadow-hard), 0 18px 30px var(--shadow);
+}
+.landmark-card canvas{
+  width:100%;
+  aspect-ratio:1;
+  image-rendering:pixelated;
+  background:#fff;
+  display:block;
+}
+.landmark-card .city{
+  text-align:center;
+  padding:.9rem .6rem 1rem;
+  background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(232,245,255,.95));
+}
+.landmark-card .city b{
+  font-family:var(--font-disp); font-weight:800; font-size:1.15rem; color:var(--ink); display:block;
+}
+.landmark-card .city small{
+  font-size:.72rem; color:#7a6f80; font-weight:600; margin-top:.15rem; display:block;
+}
+
+@media(max-width:960px){
+  .landmark-grid{ grid-template-columns:repeat(3,1fr); }
+}
+@media(max-width:560px){
+  .landmark-grid{ grid-template-columns:repeat(2,1fr); gap:1rem; }
+  .landmark-card .city b{ font-size:1rem; }
+}

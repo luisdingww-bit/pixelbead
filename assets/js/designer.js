@@ -53,8 +53,15 @@
     const label = document.getElementById('moduleLabel');
     if(label) label.textContent = mod.label + '设计器';
     document.querySelectorAll('#moduleTabs .mtab').forEach(b=>b.classList.toggle('active', b.dataset.mod===m));
-    if(history.replaceState) history.replaceState(null, '', m==='pixel' ? location.pathname : '?m='+m);
-    loadPattern(mod.patterns[0]); // 载入首个模板，给第一眼惊艳
+    const params = new URLSearchParams(location.search);
+    const pname = params.get('p');
+    let pat = mod.patterns[0];
+    if(pname){
+      const found = mod.patterns.find(p => p.name === pname);
+      if(found) pat = found;
+    }
+    if(history.replaceState) history.replaceState(null, '', m==='pixel' ? location.pathname : '?m='+m + (pname ? '&p='+encodeURIComponent(pname) : ''));
+    loadPattern(pat); // 默认载入首个模板，URL带 p 则加载指定图案
   }
 
   /* ---------- 初始化 ---------- */
