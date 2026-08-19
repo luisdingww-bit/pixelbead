@@ -24,6 +24,43 @@
 `React` `TypeScript` `Vite` `Tailwind CSS` `Three.js`
 
 ## 🔗 相关项目 / More by Louis Ding
+- **[HOT PULL · 热搜抽卡](https://luisdingww-bit.github.io/hot-pull/)** — 实时热搜抽卡小游戏
+- **[Spider-Verse Nebula](https://luisdingww-bit.github.io/spider-verse-nebula/)** — 摄像头蜘蛛侠面具
+- **[Louis Ding · 作品集](https://louis-ding.surge.sh)** — 个人作品集
+- **[SnapPrint 咔印3D](https://snapprint.surge.sh/)** — 图生 3D 打印工坊
+- **[龙族同人个人站 · Dragon Raja](https://dragonraja-ding-ldcrew.surge.sh)** — 龙族同人站
+
+## 📄 License
+以仓库内 `LICENSE` 文件为准（同人作品标注 CC BY-NC 4.0 者仅限非商用）。
+
+---
+
+<p align="center">
+  <a href="https://pixelbead.surge.sh"><img alt="Live Demo" src="https://img.shields.io/badge/%E2%96%B6_Live_Demo-ff4757?style=for-the-badge"></a>
+  <img alt="Stars" src="https://img.shields.io/github/stars/luisdingww-bit/pixelbead?style=for-the-badge&color=ffd32a">
+  <img alt="Last Commit" src="https://img.shields.io/github/last-commit/luisdingww-bit/pixelbead?style=for-the-badge">
+</p>
+
+<h1 align="center">PIXELBEAD · 拼豆星球</h1>
+
+<p align="center">像素拼豆 × 乐高积木风 × 3D 打印 创作者站点</p>
+
+> [!NOTE]
+> 把像素艺术和 3D 打印玩到一起：拼豆模板、玩具、掐丝珐琅、建筑四大模块，浏览器里设计、一键出图 / 出模。
+
+## ✨ 亮点 / Features
+- 四大模块：像素拼豆 / 玩具 / 掐丝珐琅 / 建筑
+- 浏览器内设计并预览，导出可打印素材
+- LEGO 积木风视觉 + 3D 打印工作流
+- 中英双语、响应式 premium UI
+
+## 🚀 在线体验 / Live Demo
+打开 **[Live Demo](https://pixelbead.surge.sh)** 即可免安装、纯浏览器体验。
+
+## 🛠 技术栈 / Tech Stack
+`React` `TypeScript` `Vite` `Tailwind CSS` `Three.js`
+
+## 🔗 相关项目 / More by Louis Ding
 - [实时热搜抽卡小游戏](https://luisdingww-bit.github.io/hot-pull/) — 实时热搜抽卡小游戏
 - [摄像头蜘蛛侠面具](https://luisdingww-bit.github.io/spider-verse-nebula/) — 摄像头蜘蛛侠面具
 - [个人作品集](https://louis-ding.surge.sh) — 个人作品集
